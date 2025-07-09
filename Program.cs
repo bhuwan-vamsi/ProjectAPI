@@ -26,6 +26,9 @@ namespace APIPractice
             // Register Repositories and Services
             builder.Services.AddDependencies();
 
+            // Register AutoMapper
+            builder.Services.AddAutoMapper(typeof(Program));
+
             // CORS
             builder.Services.AddCors(options =>
             {

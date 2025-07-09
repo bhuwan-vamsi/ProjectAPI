@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using APIPractice.Services;
 using APIPractice.Models;
+using APIPractice.DTOs;
+using AutoMapper;
 
 namespace APIPractice.Controllers
 {
@@ -9,51 +11,54 @@ namespace APIPractice.Controllers
     public class InventoryController : ControllerBase
     {
         private readonly ItemService _itemService;
+        private readonly IMapper _mapper;
 
-        public InventoryController(ItemService itemService)
+        public InventoryController(ItemService itemService, IMapper mapper)
         {
             _itemService = itemService;
+            _mapper = mapper;
         }
 
-        // GET: api/inventory
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Item>>> Get()
+        public async Task<ActionResult<IEnumerable<ItemDto>>> Get()
         {
             var items = await _itemService.GetAllItemsAsync();
-            return Ok(items);
+            var itemsDto = _mapper.Map<IEnumerable<ItemDto>>(items);
+            return Ok(itemsDto);
         }
 
-        // GET: api/inventory/1
         [HttpGet("{id}")]
-        public async Task<ActionResult<Item>> GetById(int id)
+        public async Task<ActionResult<ItemDto>> GetById(int id)
         {
             var item = await _itemService.GetItemByIdAsync(id);
             if (item == null)
                 return NotFound();
 
-            return Ok(item);
+            var itemDto = _mapper.Map<ItemDto>(item);
+            return Ok(itemDto);
         }
 
-        // POST: api/inventory
         [HttpPost]
-        public async Task<ActionResult> Create(Item item)
+        public async Task<ActionResult<ItemDto>> Create(CreateItemDto createItemDto)
         {
+            var item = _mapper.Map<Item>(createItemDto);
             await _itemService.AddItemAsync(item);
-            return CreatedAtAction(nameof(GetById), new { id = item.Id }, item);
+            var itemDto = _mapper.Map<ItemDto>(item);
+            return CreatedAtAction(nameof(GetById), new { id = itemDto.Id }, itemDto);
         }
 
-        // PUT: api/inventory/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, Item item)
+        public async Task<IActionResult> Update(int id, CreateItemDto updateDto)
         {
-            if (id != item.Id)
-                return BadRequest("ID mismatch");
+            var existingItem = await _itemService.GetItemByIdAsync(id);
+            if (existingItem == null)
+                return NotFound();
 
-            await _itemService.UpdateItemAsync(item);
+            _mapper.Map(updateDto, existingItem);
+            await _itemService.UpdateItemAsync(existingItem);
             return NoContent();
         }
 
-        // DELETE: api/inventory/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
@@ -65,5 +70,4 @@ namespace APIPractice.Controllers
             return NoContent();
         }
     }
-
 }
