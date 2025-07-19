@@ -4,6 +4,7 @@ namespace APIPractice.Models
 {
     public class Item
     {
+        [Key]
         public int Id { get; set; }
 
         [Required]
