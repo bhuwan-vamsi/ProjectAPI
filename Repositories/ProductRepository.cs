@@ -42,7 +42,6 @@ namespace APIPractice.Repository
             {
                 return null;
             }
-            product.Id = entity.Id;
             product.Name = entity.Name;
             product.Price = entity.Price;
             product.Units = entity.Units;
