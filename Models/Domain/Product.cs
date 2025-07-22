@@ -21,9 +21,9 @@ namespace APIPractice.Model.Domain
         public int Threshold { get; set; }
         public string Image_url{ get; set; }
         public bool Is_Active { get; set; }
-        //[Required]
-        //public int CategoryId { get; set; }
-        //[ForeignKey("CategoryId")]
-        //public Category Category { get; set; }
+        [Required]
+        public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        public Category Category { get; set; }
     }
 }

@@ -12,7 +12,6 @@ namespace APIPractice.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
     public class ProductController : ControllerBase
     {
         private readonly IRepository<Product> productRepo;
@@ -25,6 +24,7 @@ namespace APIPractice.Controller
         }
         [HttpGet]
         [ValidateModel]
+        [Authorize(Roles = "Employee,Manager")]
         public async Task<IActionResult> GetAllAsync()
         {
             var products = await productRepo.GetAllAsync();
@@ -34,6 +34,7 @@ namespace APIPractice.Controller
         [HttpGet]
         [Route("{id}")]
         [ValidateModel]
+        [Authorize(Roles = "Employee,Manager")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
             var product = await productRepo.GetAsync(id);
@@ -46,30 +47,34 @@ namespace APIPractice.Controller
         }
         [HttpPost]
         [ValidateModel]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto entity)
         {
             var product = mapper.Map<Product>(entity);
-            product = await productRepo.CreateAsync(product);   
+            product = await productRepo.CreateAsync(product);
             var productDto = mapper.Map<ProductDto>(product);
             return Ok(productDto);
         }
         [HttpPut]
         [Route("{id}")]
         [ValidateModel]
-        public async Task<IActionResult> UpdateProduct([FromRoute]int id,[FromBody] UpdateProductDto entity)
+        [Authorize(Roles = "Manager")]
+        public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] UpdateProductDto entity)
         {
+
             var product = mapper.Map<Product>(entity);
-            product = await productRepo.UpdateAsync(id,product);
+            product = await productRepo.UpdateAsync(id, product);
             var productDto = mapper.Map<ProductDto>(product);
             return Ok(productDto);
         }
         [HttpDelete]
         [Route("{id}")]
         [ValidateModel]
+        [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteProduct([FromRoute] int id)
         {
             var product = await productRepo.DeleteAsync(id);
-            if(product == null)
+            if (product == null)
             {
                 return NotFound();
             }
