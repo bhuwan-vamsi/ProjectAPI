@@ -1,0 +1,83 @@
+﻿using APIPractice.Models.DTO;
+using APIPractice.Repository.IRepository;
+using APIPractice.Services.IService;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Identity.Client;
+
+namespace APIPractice.Services
+{
+    public class AuthService : IAuthService
+    {
+        private readonly UserManager<IdentityUser> userManager;
+        private readonly ITokenRepository tokenRepository;
+        private readonly IRegisterUserRepository userRepository;
+
+        public AuthService(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository, IRegisterUserRepository userRepository) 
+        {
+            this.userManager = userManager;
+            this.tokenRepository = tokenRepository;
+            this.userRepository = userRepository;
+        }
+        public async Task RegisterEmployee(RegisterEmployeeRequest registerEmployeeRequest)
+        {
+            var identityUser = new IdentityUser
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = registerEmployeeRequest.UserName,
+                Email = registerEmployeeRequest.UserName
+            };
+            var identityResult = await userManager.CreateAsync(identityUser, registerEmployeeRequest.Password);
+            if (identityResult.Succeeded)
+            {
+                if (registerEmployeeRequest.Role != null && registerEmployeeRequest.Role.Any())
+                {
+                    identityResult = await userManager.AddToRoleAsync(identityUser, registerEmployeeRequest.Role);
+                    if (identityResult.Succeeded)
+                    {
+                        if(registerEmployeeRequest.Role.ToLower() == "manager")
+                        {
+                            await userRepository.AddManager(registerEmployeeRequest, identityUser);
+                        }
+                        else if (registerEmployeeRequest.Role.ToLower() == "employee")
+                        {
+                            await userRepository.AddEmployee(registerEmployeeRequest, identityUser);
+                        }    
+                    }
+                    else
+                    {
+                        throw new Exception("Something Went Wrong");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Something Went Wrong");
+                }
+            }
+            else
+            {
+                throw new Exception("Something Went Wrong");
+            }
+        }
+        public async Task<LoginResponseDto> LoginUser(LoginRequest loginRequest)
+        {
+            var user = await userManager.FindByEmailAsync(loginRequest.UserName);
+            if (user != null)
+            {
+                var checkPassword = await userManager.CheckPasswordAsync(user, loginRequest.Password);
+                if (checkPassword)
+                {
+                    var role = await userManager.GetRolesAsync(user);
+                    if (role != null)
+                    {
+                        var jwtToken = tokenRepository.CreateJWTToken(user, role.First());
+                        var response = new LoginResponseDto { JwtToken = jwtToken };
+                        return response;
+                    }
+                }
+            }
+            throw new Exception("Something Went Wrong");
+        }
+    }
+}

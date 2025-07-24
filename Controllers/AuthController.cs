@@ -1,6 +1,7 @@
 ﻿using APIPractice.Models.DTO;
 using APIPractice.Repository;
 using APIPractice.Repository.IRepository;
+using APIPractice.Services.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,76 +14,40 @@ namespace APIPractice.Controller
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly UserManager<IdentityUser> userManager;
-        private readonly ITokenRepository tokenRepository;
-        private readonly IRegisterUserRepository userRepository;
+        private readonly IAuthService authService;
 
-        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository, IRegisterUserRepository userRepository)
+        public AuthController(IAuthService authService)
         {
-            this.userManager = userManager;
-            this.tokenRepository = tokenRepository;
-            this.userRepository = userRepository;
+            this.authService = authService;
         }
         [HttpPost]
-        [Route("Register")]
-        [Authorize("Manager")]
-        public async Task<IActionResult> Regsiter([FromBody] RegisterRequestDto registerRequest)
+        [Route("RegisterEmployee")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> Regsiter([FromBody] RegisterEmployeeRequest registerEmployeeRequest)
         {
-            var managerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var identityUser = new IdentityUser
+            try
             {
-                Id = Guid.NewGuid().ToString(),
-                UserName = registerRequest.UserName,
-                Email = registerRequest.UserName
-            };
-            var identityResult = await userManager.CreateAsync(identityUser, registerRequest.Password);
-            if (identityResult.Succeeded)
-            {
-                if (registerRequest.Role!=null && registerRequest.Role.ToLower() != "customer")
-                {
-                    identityResult = await userManager.AddToRoleAsync(identityUser, registerRequest.Role);
-                    if (identityResult.Succeeded)
-                    {
-                        if (registerRequest.Role.ToLower() == "manager")
-                        {
-                            var user = userRepository.AddManager(registerRequest, identityUser, managerId);
-                        }
-                        else if (registerRequest.Role.ToLower() == "employee")
-                        {
-                            var user = userRepository.AddEmployee(registerRequest, identityUser);
-                        }                        
-                        return Ok("User Registered");
-                    }
-                }
+                await authService.RegisterEmployee(registerEmployeeRequest);
+                return Ok("User Registered");
             }
-            return BadRequest("Something Went Wrong");
+            catch (Exception ex)
+            {
+                    return BadRequest(ex.Message);
+            }
         }
         [HttpPost]
         [Route("Login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequest)
+        public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
-            var user = await userManager.FindByEmailAsync(loginRequest.UserName);
-            if (user != null)
+            try
             {
-                var checkPassword = await userManager.CheckPasswordAsync(user, loginRequest.Password);
-                if (checkPassword)
-                {
-                    var role = await userManager.GetRolesAsync(user);
-                    if (role != null)
-                    {
-                        var jwtToken = tokenRepository.CreateJWTToken(user, role.First());
-                        var response = new LoginResponseDto
-                        {
-                            JwtToken = jwtToken
-                        };
-                        return Ok(response);
-                    }
-                    return BadRequest("Something Went Wrong");
-
-                }
-                return BadRequest("Invalid Password");
+                var response = await authService.LoginUser(loginRequest);
+                return Ok(response);
             }
-            return BadRequest("Invalid User Name or Password");
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

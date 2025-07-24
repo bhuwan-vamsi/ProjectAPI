@@ -8,5 +8,6 @@ namespace APIPractice.Models.Domain
         public required string Id { get; set; }
         [Required]
         public required string Name { get; set; }
+        public bool IsActive { get; set; }
     }
 }

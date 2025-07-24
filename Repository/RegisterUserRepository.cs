@@ -14,27 +14,13 @@ namespace APIPractice.Repository
         {
             this.db = db;
         }
-        public async Task<Customer> AddCustomer(RegisterRequestDto registerRequest, IdentityUser identityUser)
-        {
-            var user = new Customer
-            {
-                Id = identityUser.Id,
-                Name = registerRequest.Name,
-                Address = registerRequest.Address,
-                Age = registerRequest.Age,
-                IsActive = true
-            };
-            await db.Customers.AddAsync(user);
-            await db.SaveChangesAsync();
-            return user;
-        }
-        public async Task<Employee> AddEmployee(RegisterRequestDto registerRequest, IdentityUser identityUser, Guid managerId)
+        public async Task<Employee> AddEmployee(RegisterEmployeeRequest registerRequest, IdentityUser identityUser)
         {
             var user = new Employee
             {
                 Id = identityUser.Id,
                 Name = registerRequest.Name,
-                ManagerId = managerId,
+                ManagerId = registerRequest.ManagerId,
                 Age = registerRequest.Age,
                 IsActive = true
             };
@@ -42,7 +28,7 @@ namespace APIPractice.Repository
             await db.SaveChangesAsync();
             return user;
         }
-        public async Task<Manager> AddManager(RegisterRequestDto registerRequest, IdentityUser identityUser)
+        public async Task<Manager> AddManager(RegisterManagerRequest registerRequest, IdentityUser identityUser)
         {
             var user = new Manager
             {

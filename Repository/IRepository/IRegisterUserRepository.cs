@@ -6,8 +6,7 @@ namespace APIPractice.Repository.IRepository
 {
     public interface IRegisterUserRepository
     {
-        Task<Customer> AddCustomer(RegisterRequestDto registerRequest, IdentityUser identityUser);
-        Task<Employee> AddEmployee(RegisterRequestDto registerRequest, IdentityUser identityUser, Guid id);
-        Task<Manager> AddManager(RegisterRequestDto registerRequest, IdentityUser identityUser);
+        Task<Employee> AddEmployee(RegisterEmployeeRequest registerRequest, IdentityUser identityUser);
+        Task<Manager> AddManager(RegisterManagerRequest registerRequest, IdentityUser identityUser);
     }
 }

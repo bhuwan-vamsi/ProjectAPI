@@ -6,7 +6,7 @@ namespace APIPractice.Models.DTO
     public class UpdateProductDto
     {
         [Required]
-        public string Name { get; set; }
+        public required string Name { get; set; }
         [Required]
         public decimal Price { get; set; }
         [Required]
@@ -17,6 +17,6 @@ namespace APIPractice.Models.DTO
         public int Threshold { get; set; }
         public string? ImageUrl { get; set; }
         [Required]
-        public required Category Category { get; set; }
+        public required int CategoryId { get; set; }
     }
 }

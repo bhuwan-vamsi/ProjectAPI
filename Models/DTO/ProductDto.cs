@@ -19,6 +19,6 @@ namespace APIPractice.Models.DTO
         public int Threshold { get; set; }
         public string? ImageUrl { get; set; }
         public bool IsActive { get; set; }
-        public Category Category { get; set; }
+        public required Category Category { get; set; }
     }
 }

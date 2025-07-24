@@ -2,7 +2,7 @@
 
 namespace APIPractice.Models.DTO
 {
-    public class LoginRequestDto
+    public class RegisterManagerRequest
     {
         [Required]
         [DataType(DataType.EmailAddress)]
@@ -10,5 +10,9 @@ namespace APIPractice.Models.DTO
         [Required]
         [DataType(DataType.Password)]
         public required string Password { get; set; }
+        [Required]
+        public required string Role { get; set; }
+        [Required]
+        public required string Name { get; set; }
     }
 }

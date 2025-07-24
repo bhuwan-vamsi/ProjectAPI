@@ -37,6 +37,7 @@ namespace APIPractice
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
