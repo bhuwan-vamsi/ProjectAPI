@@ -1,9 +1,11 @@
-﻿using APIPractice.Model.DTO;
+﻿using APIPractice.Models.DTO;
 using APIPractice.Repository;
 using APIPractice.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace APIPractice.Controller
 {
@@ -13,16 +15,20 @@ namespace APIPractice.Controller
     {
         private readonly UserManager<IdentityUser> userManager;
         private readonly ITokenRepository tokenRepository;
+        private readonly IRegisterUserRepository userRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository, IRegisterUserRepository userRepository)
         {
             this.userManager = userManager;
             this.tokenRepository = tokenRepository;
+            this.userRepository = userRepository;
         }
         [HttpPost]
         [Route("Register")]
+        [Authorize("Manager")]
         public async Task<IActionResult> Regsiter([FromBody] RegisterRequestDto registerRequest)
         {
+            var managerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var identityUser = new IdentityUser
             {
                 Id = Guid.NewGuid().ToString(),
@@ -32,11 +38,19 @@ namespace APIPractice.Controller
             var identityResult = await userManager.CreateAsync(identityUser, registerRequest.Password);
             if (identityResult.Succeeded)
             {
-                if (registerRequest.Roles != null && registerRequest.Roles.Any())
+                if (registerRequest.Role!=null && registerRequest.Role.ToLower() != "customer")
                 {
-                    identityResult = await userManager.AddToRolesAsync(identityUser, registerRequest.Roles);
+                    identityResult = await userManager.AddToRoleAsync(identityUser, registerRequest.Role);
                     if (identityResult.Succeeded)
                     {
+                        if (registerRequest.Role.ToLower() == "manager")
+                        {
+                            var user = userRepository.AddManager(registerRequest, identityUser, managerId);
+                        }
+                        else if (registerRequest.Role.ToLower() == "employee")
+                        {
+                            var user = userRepository.AddEmployee(registerRequest, identityUser);
+                        }                        
                         return Ok("User Registered");
                     }
                 }

@@ -2,10 +2,10 @@
 
 namespace APIPractice.Models.Domain
 {
-    public class Category
+    public class Manager
     {
         [Key]
-        public int Id { get; set; }
+        public required string Id { get; set; }
         [Required]
         public required string Name { get; set; }
     }

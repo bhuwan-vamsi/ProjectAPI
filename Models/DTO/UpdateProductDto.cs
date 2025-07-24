@@ -1,14 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using APIPractice.Models.Domain;
+using System.ComponentModel.DataAnnotations;
 
-namespace APIPractice.Models.Domain
+namespace APIPractice.Models.DTO
 {
-    public class Product
+    public class UpdateProductDto
     {
-        [Key]
-        public int Id { get; set; }
         [Required]
-        public required string Name { get; set; }
+        public string Name { get; set; }
         [Required]
         public decimal Price { get; set; }
         [Required]
@@ -18,10 +16,7 @@ namespace APIPractice.Models.Domain
         [Required]
         public int Threshold { get; set; }
         public string? ImageUrl { get; set; }
-        public bool IsActive { get; set; }
         [Required]
-        public int CategoryId { get; set; }
-        [ForeignKey("CategoryId")]
         public required Category Category { get; set; }
     }
 }

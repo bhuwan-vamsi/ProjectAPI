@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace APIPractice.Model.DTO
+namespace APIPractice.Models.DTO
 {
     public class CategoryDto
     {
         [Required]
         public int Id { get; set; }
         [Required]
-        public string Name { get; set; }
+        public required string Name { get; set; }
     }
 }

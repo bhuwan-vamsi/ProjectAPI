@@ -1,19 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace APIPractice.Model.DTO
+namespace APIPractice.Models.DTO
 {
-    public class UpdateProductDto
+    public class CreateProductDto
     {
         [Required]
-        public string Name { get; set; }
+        public required string Name { get; set; }
         [Required]
         public decimal Price { get; set; }
         [Required]
-        public string Units { get; set; }
+        public required string Units { get; set; }
         [Required]
         public int Quantity { get; set; }
         [Required]
         public int Threshold { get; set; }
-        public string Image_url { get; set; }
+        public string? ImageUrl { get; set; }
+        [Required]
+        public int CategoryId { get; set; }
     }
 }

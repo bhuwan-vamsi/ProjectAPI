@@ -13,7 +13,8 @@ namespace APIPractice.Data
         {
             base.OnModelCreating(builder);
             var managerId = "35da3d5d-79f4-44e0-8d6b-08d0dcf75991";
-            var employeeId = "9d12498c - de59 - 46af - a8f2 - 81e7cee88f7c";
+            var employeeId = "9d12498c-de59-46af-a8f2-81e7cee88f7c";
+            var customerId = "5ae289a5-da00-4d60-8b1e-4183a019d8c1";
             var roles = new List<IdentityRole> {
                 new IdentityRole { 
                     Id = managerId, 
@@ -27,6 +28,13 @@ namespace APIPractice.Data
                     ConcurrencyStamp = employeeId,
                     Name = "Employee",
                     NormalizedName = "EMPLOYEE"
+                },
+                new IdentityRole
+                {
+                    Id = customerId,
+                    ConcurrencyStamp= customerId,
+                    Name = "Customer",
+                    NormalizedName = "CUSTOMER"
                 }
             };
             builder.Entity<IdentityRole>().HasData(roles);

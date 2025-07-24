@@ -1,14 +1,14 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace APIPractice.Model.DTO
+namespace APIPractice.Models.DTO
 {
     public class LoginRequestDto
     {
         [Required]
         [DataType(DataType.EmailAddress)]
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
         [Required]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public required string Password { get; set; }
     }
 }

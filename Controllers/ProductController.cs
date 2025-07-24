@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using APIPractice.CustomAcitonFilters;
-using APIPractice.Model.Domain;
-using APIPractice.Model.DTO;
+using APIPractice.Models.Domain;
+using APIPractice.Models.DTO;
 using APIPractice.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using APIPractice.Services.IService;
 
 namespace APIPractice.Controller
 {
@@ -14,22 +15,26 @@ namespace APIPractice.Controller
     [ApiController]
     public class ProductController : ControllerBase
     {
-        private readonly IRepository<Product> productRepo;
-        private readonly IMapper mapper;
+        private readonly IProductService productService;
 
-        public ProductController(IRepository<Product> productRepo, IMapper mapper)
+        public ProductController(IProductService productService)
         {
-            this.productRepo = productRepo;
-            this.mapper = mapper;
+            this.productService = productService;
         }
         [HttpGet]
         [ValidateModel]
         [Authorize(Roles = "Employee,Manager")]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAll()
         {
-            var products = await productRepo.GetAllAsync();
-            var productsdto = mapper.Map<List<ProductDto>>(products);
-            return Ok(productsdto);
+            try
+            {
+                return Ok(await productService.GetAllProductAsync());
+            }
+            catch (KeyNotFoundException ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+            
         }
         [HttpGet]
         [Route("{id}")]
@@ -37,23 +42,22 @@ namespace APIPractice.Controller
         [Authorize(Roles = "Employee,Manager")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
-            var product = await productRepo.GetAsync(id);
-            if (product == null)
+            try
             {
-                return NotFound();
+                return Ok(await productService.GetProductAsync(id));
             }
-            var productdto = mapper.Map<ProductDto>(product);
-            return Ok(productdto);
+            catch (KeyNotFoundException ex) 
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpPost]
         [ValidateModel]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto entity)
         {
-            var product = mapper.Map<Product>(entity);
-            product = await productRepo.CreateAsync(product);
-            var productDto = mapper.Map<ProductDto>(product);
-            return Ok(productDto);
+            var product = await productService.CreateProductAsync(entity);
+            return CreatedAtAction(nameof(GetById), new { id = product.Id }, entity);
         }
         [HttpPut]
         [Route("{id}")]
@@ -62,10 +66,15 @@ namespace APIPractice.Controller
         public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] UpdateProductDto entity)
         {
 
-            var product = mapper.Map<Product>(entity);
-            product = await productRepo.UpdateAsync(id, product);
-            var productDto = mapper.Map<ProductDto>(product);
-            return Ok(productDto);
+            try
+            {
+                await productService.UpdateProductAsync(id, entity);
+                return Ok("Updated Successfully");
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         [HttpDelete]
         [Route("{id}")]
@@ -73,12 +82,15 @@ namespace APIPractice.Controller
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> DeleteProduct([FromRoute] int id)
         {
-            var product = await productRepo.DeleteAsync(id);
-            if (product == null)
+            try
             {
-                return NotFound();
+                await productService.DeleteProductAsync(id);
+                return Ok();
             }
-            return Ok(product);
+            catch (KeyNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

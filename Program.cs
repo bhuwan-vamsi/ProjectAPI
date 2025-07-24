@@ -1,13 +1,21 @@
 using APIPractice.Data;
 using APIPractice.Mappings;
-using APIPractice.Model.Domain;
+using APIPractice.Models.Domain;
+using APIPractice.Models.DTO;
 using APIPractice.Repository;
 using APIPractice.Repository.IRepository;
+using APIPractice.Services;
+using APIPractice.Services.IService;
+using AutoMapper;
+using CsvHelper;
+using CsvHelper.Configuration;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Formats.Asn1;
+using System.Globalization;
 using System.Text;
 
 namespace APIPractice
@@ -24,10 +32,11 @@ namespace APIPractice
             builder.Services.AddHttpContextAccessor();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            builder.Services.AddDbContext<ApplicationAuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultAuthConnection")));
-            builder.Services.AddScoped<IRepository<Product>, ProductRepository>();
+            builder.Services.AddDbContext<ApplicationAuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddScoped<IProductRepository<Product>, ProductRepository>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
-            //builder.Services.AddScoped<IImageRespository, ImageRepository>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>

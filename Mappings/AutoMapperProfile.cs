@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using APIPractice.Model.Domain;
-using APIPractice.Model.DTO;
+using APIPractice.Models.Domain;
+using APIPractice.Models.DTO;
 
 namespace APIPractice.Mappings
 {
