@@ -3,6 +3,7 @@ using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
 using APIPractice.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace APIPractice.Repository
 {
@@ -16,6 +17,11 @@ namespace APIPractice.Repository
         }
         public async Task<Employee> AddEmployee(RegisterEmployeeRequest registerRequest, IdentityUser identityUser)
         {
+            var manager = await db.Managers.FirstOrDefaultAsync(u => u.Id == registerRequest.ManagerId.ToString());
+            if(manager == null)
+            {
+                throw new Exception("Invalid Manager Id");
+            }
             var user = new Employee
             {
                 Id = identityUser.Id,

@@ -45,7 +45,7 @@ namespace APIPractice.Repository
             existingProduct.Quantity = updatedProduct.Quantity;
             existingProduct.Threshold = updatedProduct.Threshold;
             existingProduct.ImageUrl = updatedProduct.ImageUrl;
-            existingProduct.Category = updatedProduct.Category;
+            existingProduct.CategoryId = updatedProduct.CategoryId;
             _db.Products.Update(existingProduct);
             await _db.SaveChangesAsync();
         }
