@@ -1,18 +1,23 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using APIPractice.Models.Domain;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace APIPractice.Models.Domain
+namespace practice_project.Models.Domain
 {
+    [Index(nameof(Phone), IsUnique = true)]
     public class Customer
     {
         [Key]
-        public required string Id { get; set; }
-        [Required]
+        public Guid Id { get; set; } // This Id will be extracted from Identity User
+
         public required string Name { get; set; }
-        [Required]
-        public int Age { get; set; }
-        public string? Address {  get; set; }
-        public bool IsActive { get; set; }
+
+        public required string Phone { get; set; }
+
+        public string? Address { get; set; }
+
+
+        // Reverse Navigation Properties
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

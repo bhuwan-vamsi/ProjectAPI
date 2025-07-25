@@ -1,12 +1,18 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
-namespace APIPractice.Models.Domain
+namespace practice_project.Models.Domain
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class OrderStatus
     {
         [Key]
-        public int Id { get; set; }
-        [Required]
-        public required string Status { get; set; }
+        public Guid Id { get; set; }
+
+        public required string Name { get; set; }
+
+
+        //// Reverse Navigation Properties
+        //public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

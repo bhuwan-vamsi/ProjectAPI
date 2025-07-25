@@ -1,28 +1,36 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using APIPractice.Models.Domain;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Diagnostics.CodeAnalysis;
 
-namespace APIPractice.Models.Domain
+namespace practice_project.Models.Domain
 {
     public class Order
     {
         [Key]
         public Guid Id { get; set; }
-        [Required]
-        public required string CustomerId { get; set; }
-        [AllowNull]
-        public string? EmployeeId { get; set; }
-        [Required]
+
+        public Guid CustomerId { get; set; }
+
         public decimal Amount { get; set; }
-        [Required]
-        public required int OrderStatusId { get; set; }
-        [ForeignKey("OrderStatusId")]
-        public required OrderStatus OrderStatus { get; set; }
+
+        public Guid OrderStatusId { get; set; }
+
         public DateTime CreatedAt { get; set; }
-        public DateTime DeliveredAt { get; set; }
-        [ForeignKey("CustomerId")]
+
+        public DateTime? DeliveredAt { get; set; }
+
+
+        // Navigation Properties
+        [ForeignKey(nameof(CustomerId))]
         public required Customer Customer { get; set; }
-        [ForeignKey("EmployeeId")]
-        public Customer? Employee { get; set; }
+
+        [ForeignKey(nameof(OrderStatusId))]
+        public required OrderStatus OrderStatus { get; set; }
+
+
+        // Reverse Navigation Properties
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+        public ICollection<TaskHistory> TaskHistories { get; set; } = new List<TaskHistory>();
     }
 }
