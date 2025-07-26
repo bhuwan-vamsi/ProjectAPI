@@ -1,6 +1,7 @@
 ﻿using APIPractice.Models.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace APIPractice.Models.Domain
 {
@@ -14,6 +15,7 @@ namespace APIPractice.Models.Domain
 
 
         // Reverse Navigation Properties
+        [JsonIgnore]
         public ICollection<Product> Products { get; set; } = new List<Product>();
     }
 }

@@ -33,6 +33,7 @@ namespace APIPractice.Models.Domain
 
 
         // Reverse Navigation Properties
+
         public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
         public ICollection<StockUpdateHistory> StockUpdateHistories { get; set; } = new List<StockUpdateHistory>();
