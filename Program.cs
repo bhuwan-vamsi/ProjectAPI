@@ -36,6 +36,9 @@ namespace APIPractice
             builder.Services.AddScoped<IProductRepository<Product>, ProductRepository>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddScoped<IProductService, ProductService>();
+            
+            //// Hide the below line once after running whole app
+            //builder.Services.AddScoped<ProductCsvImporter>();
             builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -95,6 +98,16 @@ namespace APIPractice
                 });
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var importer = scope.ServiceProvider.GetRequiredService<ProductCsvImporter>();
+
+                var csvPath = Path.Combine(Directory.GetCurrentDirectory(), "DB Dump", "Items.csv");
+
+                importer.ImportProductsFromCsvAsync(csvPath).GetAwaiter().GetResult();
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {

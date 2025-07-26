@@ -53,9 +53,7 @@ namespace APIPractice.Repository
             {
                 Id = Guid.Parse(identityUser.Id),
                 Name = registerCustomer.Name,
-                Age = registerCustomer.Age,
                 IsActive = true,
-                Address = registerCustomer.Address,
                 Phone = registerCustomer.Phone,
             };
 

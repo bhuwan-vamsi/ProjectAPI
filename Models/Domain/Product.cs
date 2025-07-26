@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace APIPractice.Models.Domain
 {
-    [Index(nameof(Name), nameof(Units), IsUnique = true)]
     public class Product
     {
         [Key]
