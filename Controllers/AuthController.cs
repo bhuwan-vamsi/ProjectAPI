@@ -23,7 +23,7 @@ namespace APIPractice.Controller
         }
         [HttpPost]
         [Route("RegisterEmployee")]
-        [Authorize(Roles ="Admin")]
+        //[Authorize(Roles ="Admin")]
         public async Task<IActionResult> Regsiter([FromBody] RegisterEmployeeRequest registerEmployeeRequest)
         {
             try
