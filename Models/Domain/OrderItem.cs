@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace practice_project.Models.Domain
+namespace APIPractice.Models.Domain
 {
     [Index(nameof(OrderId), nameof(ProductId), IsUnique = true)]
     public class OrderItem

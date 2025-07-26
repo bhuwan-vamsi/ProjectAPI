@@ -43,7 +43,7 @@ namespace APIPractice.Services
                         else if (registerEmployeeRequest.Role.ToLower() == "employee")
                         {
                             await userRepository.AddEmployee(registerEmployeeRequest, identityUser);
-                        }    
+                        }
                     }
                     else
                     {
@@ -60,6 +60,44 @@ namespace APIPractice.Services
                 throw new Exception("Something Went Wrong");
             }
         }
+
+        public async Task RegisterCustomer(RegisterCustomerRequest registerCustomerRequest)
+        {
+            var identityUser = new IdentityUser
+            {
+                Id = Guid.NewGuid().ToString(),
+                UserName = registerCustomerRequest.UserName,
+                Email = registerCustomerRequest.UserName
+            };
+
+            var identityResult = await userManager.CreateAsync(identityUser, registerCustomerRequest.Password);
+            if (identityResult.Succeeded)
+            {
+                if(registerCustomerRequest.Role != null && registerCustomerRequest.Role.Any())
+                {
+                    identityResult = await userManager.AddToRoleAsync(identityUser, registerCustomerRequest.Role);
+                    if (identityResult.Succeeded)
+                    {
+                        await userRepository.AddCustomer(registerCustomerRequest, identityUser);
+                    }
+                    else
+                    {
+                        throw new Exception("Failed To Add The Role");
+                    }
+                }
+                else
+                {
+                    throw new Exception("User Already has a role");
+                }
+            }
+            else
+            {
+                throw new Exception("Something went wrong");
+            }
+
+
+        }
+
         public async Task<LoginResponseDto> LoginUser(LoginRequest loginRequest)
         {
             var user = await userManager.FindByEmailAsync(loginRequest.UserName);
@@ -79,5 +117,7 @@ namespace APIPractice.Services
             }
             throw new Exception("Something Went Wrong");
         }
+
+        
     }
 }

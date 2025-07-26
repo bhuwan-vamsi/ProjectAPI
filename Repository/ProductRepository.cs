@@ -20,7 +20,7 @@ namespace APIPractice.Repository
             return await _db.Products.Include("Category").Where(x=> x.IsActive==true).ToListAsync();
         }
 
-        public async Task<Product> GetAsync(int id)
+        public async Task<Product> GetAsync(Guid id)
         {
             var product= await _db.Products.Include("Category").FirstOrDefaultAsync(u=> u.Id == id && u.IsActive==true);
             if (product == null)

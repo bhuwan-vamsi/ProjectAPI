@@ -24,68 +24,62 @@ namespace APIPractice.Migrations
 
             modelBuilder.Entity("APIPractice.Models.Domain.Category", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Categories");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            IsActive = false,
+                            Id = new Guid("b1f5a121-d4ad-48f2-8736-30bb6080b2cc"),
                             Name = "Fruits & Vegetables"
                         },
                         new
                         {
-                            Id = 2,
-                            IsActive = false,
+                            Id = new Guid("5394e988-0a56-41c5-bd6a-3a0b9f2f3177"),
                             Name = "Eggs, Meat & Fish"
                         },
                         new
                         {
-                            Id = 3,
-                            IsActive = false,
+                            Id = new Guid("5633ef72-1953-49b0-b587-95f8a2fc1684"),
                             Name = "Snacks & Branded Foods"
                         },
                         new
                         {
-                            Id = 4,
-                            IsActive = false,
+                            Id = new Guid("75bd72c3-9150-4ec7-b2a9-a47e38744cac"),
                             Name = "Baby Care"
                         },
                         new
                         {
-                            Id = 5,
-                            IsActive = false,
+                            Id = new Guid("e6340996-3826-4488-a93a-53f3ddbc4b33"),
                             Name = "Bakery, Cakes & Diary"
                         },
                         new
                         {
-                            Id = 6,
-                            IsActive = false,
+                            Id = new Guid("d20b902c-05df-4f4e-8647-639de3319d5b"),
                             Name = "Beverages"
                         });
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.Customer", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Age")
@@ -98,15 +92,23 @@ namespace APIPractice.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("Phone")
+                        .IsUnique();
 
                     b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.Employee", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Age")
                         .HasColumnType("int");
@@ -123,16 +125,16 @@ namespace APIPractice.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ManagerId");
+
                     b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.Manager", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -155,24 +157,18 @@ namespace APIPractice.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CustomerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("DeliveredAt")
+                    b.Property<DateTime?>("DeliveredAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EmployeeId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("OrderStatusId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("OrderStatusId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("OrderStatusId");
 
@@ -188,8 +184,8 @@ namespace APIPractice.Migrations
                     b.Property<Guid>("OrderId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -199,40 +195,40 @@ namespace APIPractice.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("OrderId");
-
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("OrderId", "ProductId")
+                        .IsUnique();
 
                     b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.OrderStatus", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Status")
+                    b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("OrderStatuses");
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.Product", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ImageUrl")
                         .HasColumnType("nvarchar(max)");
@@ -242,7 +238,7 @@ namespace APIPractice.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -255,43 +251,96 @@ namespace APIPractice.Migrations
 
                     b.Property<string>("Units")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("Name", "Units")
+                        .IsUnique();
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("APIPractice.Models.Domain.StockUpdateHistory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ManagerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ManagerId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("StockUpdateHistory");
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.TaskHistory", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<DateTime>("AcceptedAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
                     b.ToTable("TasksHistory");
+                });
+
+            modelBuilder.Entity("APIPractice.Models.Domain.Employee", b =>
+                {
+                    b.HasOne("APIPractice.Models.Domain.Manager", "Manager")
+                        .WithMany("Employees")
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Manager");
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.Order", b =>
                 {
                     b.HasOne("APIPractice.Models.Domain.Customer", "Customer")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("APIPractice.Models.Domain.Customer", "Employee")
-                        .WithMany()
-                        .HasForeignKey("EmployeeId");
 
                     b.HasOne("APIPractice.Models.Domain.OrderStatus", "OrderStatus")
                         .WithMany()
@@ -301,21 +350,19 @@ namespace APIPractice.Migrations
 
                     b.Navigation("Customer");
 
-                    b.Navigation("Employee");
-
                     b.Navigation("OrderStatus");
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.OrderItem", b =>
                 {
                     b.HasOne("APIPractice.Models.Domain.Order", "Order")
-                        .WithMany()
+                        .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("APIPractice.Models.Domain.Product", "Product")
-                        .WithMany()
+                        .WithMany("OrderItems")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -328,12 +375,79 @@ namespace APIPractice.Migrations
             modelBuilder.Entity("APIPractice.Models.Domain.Product", b =>
                 {
                     b.HasOne("APIPractice.Models.Domain.Category", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("APIPractice.Models.Domain.StockUpdateHistory", b =>
+                {
+                    b.HasOne("APIPractice.Models.Domain.Manager", "Manager")
+                        .WithMany()
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("APIPractice.Models.Domain.Product", "Product")
+                        .WithMany("StockUpdateHistories")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Manager");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("APIPractice.Models.Domain.TaskHistory", b =>
+                {
+                    b.HasOne("APIPractice.Models.Domain.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("APIPractice.Models.Domain.Order", "Order")
+                        .WithMany("TaskHistories")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("APIPractice.Models.Domain.Category", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("APIPractice.Models.Domain.Customer", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
+            modelBuilder.Entity("APIPractice.Models.Domain.Manager", b =>
+                {
+                    b.Navigation("Employees");
+                });
+
+            modelBuilder.Entity("APIPractice.Models.Domain.Order", b =>
+                {
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("TaskHistories");
+                });
+
+            modelBuilder.Entity("APIPractice.Models.Domain.Product", b =>
+                {
+                    b.Navigation("OrderItems");
+
+                    b.Navigation("StockUpdateHistories");
                 });
 #pragma warning restore 612, 618
         }

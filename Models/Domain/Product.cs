@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace practice_project.Models.Domain
+namespace APIPractice.Models.Domain
 {
     [Index(nameof(Name), nameof(Units), IsUnique = true)]
     public class Product

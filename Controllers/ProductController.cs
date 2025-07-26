@@ -37,10 +37,10 @@ namespace APIPractice.Controller
             
         }
         [HttpGet]
-        [Route("{id}")]
+        [Route("{id:Guid}")]
         [ValidateModel]
         [Authorize(Roles = "Employee,Manager")]
-        public async Task<IActionResult> GetById([FromRoute] int id)
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             try
             {
@@ -60,10 +60,10 @@ namespace APIPractice.Controller
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, entity);
         }
         [HttpPut]
-        [Route("{id}")]
+        [Route("{id:Guid}")]
         [ValidateModel]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> UpdateProduct([FromRoute] int id, [FromBody] UpdateProductDto entity)
+        public async Task<IActionResult> UpdateProduct([FromRoute] Guid id, [FromBody] UpdateProductDto entity)
         {
 
             try
@@ -77,10 +77,10 @@ namespace APIPractice.Controller
             }
         }
         [HttpDelete]
-        [Route("{id}")]
+        [Route("{id:Guid}")]
         [ValidateModel]
         [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> DeleteProduct([FromRoute] int id)
+        public async Task<IActionResult> DeleteProduct([FromRoute] Guid id)
         {
             try
             {

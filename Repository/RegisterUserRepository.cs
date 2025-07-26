@@ -17,16 +17,17 @@ namespace APIPractice.Repository
         }
         public async Task<Employee> AddEmployee(RegisterEmployeeRequest registerRequest, IdentityUser identityUser)
         {
-            var manager = await db.Managers.FirstOrDefaultAsync(u => u.Id == registerRequest.ManagerId.ToString());
+            var manager = await db.Managers.FirstOrDefaultAsync(u => u.Id == registerRequest.ManagerId);
             if(manager == null)
             {
                 throw new Exception("Invalid Manager Id");
             }
             var user = new Employee
             {
-                Id = identityUser.Id,
+                Id = Guid.Parse(identityUser.Id),
                 Name = registerRequest.Name,
                 ManagerId = registerRequest.ManagerId,
+                Manager = manager,
                 Age = registerRequest.Age,
                 IsActive = true
             };
@@ -38,10 +39,27 @@ namespace APIPractice.Repository
         {
             var user = new Manager
             {
-                Id = identityUser.Id,
+                Id = Guid.Parse(identityUser.Id),
                 Name = registerRequest.Name
             };
             await db.Managers.AddAsync(user);
+            await db.SaveChangesAsync();
+            return user;
+        }
+
+        public async Task<Customer> AddCustomer(RegisterCustomerRequest registerCustomer, IdentityUser identityUser)
+        {
+            var user = new Customer
+            {
+                Id = Guid.Parse(identityUser.Id),
+                Name = registerCustomer.Name,
+                Age = registerCustomer.Age,
+                IsActive = true,
+                Address = registerCustomer.Address,
+                Phone = registerCustomer.Phone,
+            };
+
+            await db.Customers.AddAsync(user);
             await db.SaveChangesAsync();
             return user;
         }

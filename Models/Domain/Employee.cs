@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace practice_project.Models.Domain
+namespace APIPractice.Models.Domain
 {
     public class Employee
     {
@@ -12,6 +12,10 @@ namespace practice_project.Models.Domain
         public required string Name { get; set; }
 
         public Guid ManagerId { get; set; }
+
+        public required int Age { get; set; }
+
+        public required bool IsActive { get; set; }
 
 
         // Navigation Property

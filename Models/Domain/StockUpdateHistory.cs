@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace practice_project.Models.Domain
+namespace APIPractice.Models.Domain
 {
     public class StockUpdateHistory
     {

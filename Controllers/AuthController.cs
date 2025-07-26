@@ -1,4 +1,5 @@
-﻿using APIPractice.Models.DTO;
+﻿using APIPractice.CustomAcitonFilters;
+using APIPractice.Models.DTO;
 using APIPractice.Repository;
 using APIPractice.Repository.IRepository;
 using APIPractice.Services.IService;
@@ -35,6 +36,8 @@ namespace APIPractice.Controller
                     return BadRequest(ex.Message);
             }
         }
+
+
         [HttpPost]
         [Route("Login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
@@ -45,6 +48,21 @@ namespace APIPractice.Controller
                 return Ok(response);
             }
             catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [ValidateModel]
+        [Route("RegisterCustomer")]
+        public async Task<IActionResult> RegisterCustomer([FromBody] RegisterCustomerRequest registerCustomerRequest)
+        {
+            try
+            {
+                await authService.RegisterCustomer(registerCustomerRequest);
+                return Ok("Customer Registered");
+            }catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }

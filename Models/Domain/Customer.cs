@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 
-namespace practice_project.Models.Domain
+namespace APIPractice.Models.Domain
 {
     [Index(nameof(Phone), IsUnique = true)]
     public class Customer
@@ -12,12 +12,16 @@ namespace practice_project.Models.Domain
 
         public required string Name { get; set; }
 
+        public required int Age { get; set; }
+
         public required string Phone { get; set; }
 
-        public string? Address { get; set; }
+        public required string Address { get; set; }
+
+        public required bool IsActive { get; set; }
 
 
         // Reverse Navigation Properties
-        public ICollection<Order> Orders { get; set; } = new List<Order>();
+        public ICollection<Order?> Orders { get; set; } = new List<Order?>();
     }
 }

@@ -8,5 +8,6 @@ namespace APIPractice.Repository.IRepository
     {
         Task<Employee> AddEmployee(RegisterEmployeeRequest registerRequest, IdentityUser identityUser);
         Task<Manager> AddManager(RegisterManagerRequest registerRequest, IdentityUser identityUser);
+        Task<Customer> AddCustomer(RegisterCustomerRequest registerRequest, IdentityUser identityUser);
     }
 }

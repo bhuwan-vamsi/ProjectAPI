@@ -23,7 +23,7 @@ CREATE TABLE Products (
 GO
 
 -- Insert data into Products from items table
-INSERT INTO Products (name, price, units, quantity, threshold, image_url, category_id)
+  INSERT INTO Products (name, price, units, quantity, threshold, ImageUrl,IsActive, CategoryId)
 SELECT 
     i.name,
     i.price,
@@ -31,6 +31,7 @@ SELECT
     100,              -- Default quantity
     20,               -- Default threshold
     i.image_url,
+	1,
     c.id              -- Foreign key from Categories
 FROM items i
 JOIN Categories c ON i.category = c.name;

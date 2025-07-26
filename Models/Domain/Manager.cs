@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace practice_project.Models.Domain
+namespace APIPractice.Models.Domain
 {
     public class Manager
     {

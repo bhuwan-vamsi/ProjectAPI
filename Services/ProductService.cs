@@ -23,7 +23,7 @@ namespace APIPractice.Services
             return (await productRepo.CreateAsync(product));
         }
 
-        public async Task DeleteProductAsync(int id)
+        public async Task DeleteProductAsync(Guid id)
         {
             var product = await productRepo.GetAsync(id);
             if (product == null) 
@@ -38,13 +38,13 @@ namespace APIPractice.Services
             var products = await productRepo.GetAllAsync();
             return mapper.Map<List<ProductDto>>(products);
         }
-        public async Task<ProductDto> GetProductAsync(int id)
+        public async Task<ProductDto> GetProductAsync(Guid id)
         {
             var product = await productRepo.GetAsync(id);
             return mapper.Map<ProductDto>(product);
         }
 
-        public async Task UpdateProductAsync(int id, UpdateProductDto product)
+        public async Task UpdateProductAsync(Guid id, UpdateProductDto product)
         {
             var existingProduct = await productRepo.GetAsync(id);
             if (existingProduct == null) 

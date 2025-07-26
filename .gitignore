@@ -16,6 +16,12 @@
 # Mono auto generated files
 mono_crash.*
 
+# Ignore EF Core migrations
+[Mm]igrations/
+[Mm]igrations/*.cs
+[Mm]igrations/*.Designer.cs
+[Mm]igrations/*ModelSnapshot.cs
+
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
