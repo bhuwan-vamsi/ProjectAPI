@@ -31,17 +31,31 @@ namespace APIPractice
             builder.Services.AddControllers();
             builder.Services.AddHttpContextAccessor();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             builder.Services.AddDbContext<ApplicationAuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+            
+            
             builder.Services.AddScoped<IProductRepository<Product>, ProductRepository>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
-            builder.Services.AddScoped<IProductService, ProductService>();
-            
+            builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
+
             //// Hide the below line once after running whole app
             //builder.Services.AddScoped<ProductCsvImporter>();
-            builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
+
             builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+
+
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
@@ -99,14 +113,14 @@ namespace APIPractice
 
             var app = builder.Build();
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var importer = scope.ServiceProvider.GetRequiredService<ProductCsvImporter>();
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var importer = scope.ServiceProvider.GetRequiredService<ProductCsvImporter>();
 
-                var csvPath = Path.Combine(Directory.GetCurrentDirectory(), "DB Dump", "Items.csv");
+            //    var csvPath = Path.Combine(Directory.GetCurrentDirectory(), "DB Dump", "Items.csv");
 
-                importer.ImportProductsFromCsvAsync(csvPath).GetAwaiter().GetResult();
-            }
+            //    importer.ImportProductsFromCsvAsync(csvPath).GetAwaiter().GetResult();
+            //}
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

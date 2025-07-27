@@ -156,9 +156,6 @@ namespace APIPractice.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("DeliveredAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<Guid>("OrderStatusId")
                         .HasColumnType("uniqueidentifier");
 
@@ -215,6 +212,23 @@ namespace APIPractice.Migrations
                         .IsUnique();
 
                     b.ToTable("OrderStatuses");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("eef01fc4-7307-4413-a72b-7541f96010d2"),
+                            Name = "Billed"
+                        },
+                        new
+                        {
+                            Id = new Guid("1897c6ce-92d2-4f11-ad44-8a9db3a2bca6"),
+                            Name = "Accepted"
+                        },
+                        new
+                        {
+                            Id = new Guid("ac5e5767-dd5d-4c46-bdea-947155ddeda4"),
+                            Name = "Packed"
+                        });
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.Product", b =>
@@ -336,7 +350,7 @@ namespace APIPractice.Migrations
                         .IsRequired();
 
                     b.HasOne("APIPractice.Models.Domain.OrderStatus", "OrderStatus")
-                        .WithMany()
+                        .WithMany("Orders")
                         .HasForeignKey("OrderStatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -348,7 +362,7 @@ namespace APIPractice.Migrations
 
             modelBuilder.Entity("APIPractice.Models.Domain.OrderItem", b =>
                 {
-                    b.HasOne("APIPractice.Models.Domain.Order", "Order")
+                    b.HasOne("APIPractice.Models.Domain.Order", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -359,8 +373,6 @@ namespace APIPractice.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -434,6 +446,11 @@ namespace APIPractice.Migrations
                     b.Navigation("OrderItems");
 
                     b.Navigation("TaskHistories");
+                });
+
+            modelBuilder.Entity("APIPractice.Models.Domain.OrderStatus", b =>
+                {
+                    b.Navigation("Orders");
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.Product", b =>

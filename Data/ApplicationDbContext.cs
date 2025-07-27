@@ -32,6 +32,12 @@ namespace APIPractice.Data
                 new Category { Id = Guid.Parse("e6340996-3826-4488-a93a-53f3ddbc4b33"), Name = "Bakery, Cakes & Diary" },
                 new Category { Id = Guid.Parse("d20b902c-05df-4f4e-8647-639de3319d5b"), Name = "Beverages" }
                 );
+
+            modelBuilder.Entity<OrderStatus>().HasData(
+                new OrderStatus { Id = Guid.Parse("eef01fc4-7307-4413-a72b-7541f96010d2"), Name = "Billed" },
+                new OrderStatus { Id = Guid.Parse("1897c6ce-92d2-4f11-ad44-8a9db3a2bca6"), Name = "Accepted" },
+                new OrderStatus { Id = Guid.Parse("ac5e5767-dd5d-4c46-bdea-947155ddeda4"), Name = "Packed" }
+            );
         }
     }     
 }
