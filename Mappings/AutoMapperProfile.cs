@@ -12,6 +12,8 @@ namespace APIPractice.Mappings
             //CreateMap<List<Product>, List<ProductDto>>().ReverseMap();
             CreateMap<Product, CreateProductDto>().ReverseMap();
             CreateMap<Product, UpdateProductDto>().ReverseMap();
+            CreateMap<OrderItem, OrderItemDto>().ReverseMap();
+            CreateMap<OrderItem, OrderHistoryDto>().ReverseMap();
         }
     }
 }

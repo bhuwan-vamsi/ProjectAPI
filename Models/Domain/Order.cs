@@ -17,7 +17,6 @@ namespace APIPractice.Models.Domain
 
         public DateTime CreatedAt { get; set; }
 
-        public DateTime? DeliveredAt { get; set; }
 
 
         // Navigation Properties
