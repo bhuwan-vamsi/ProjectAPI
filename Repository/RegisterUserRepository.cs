@@ -17,17 +17,11 @@ namespace APIPractice.Repository
         }
         public async Task<Employee> AddEmployee(RegisterEmployeeRequest registerRequest, IdentityUser identityUser)
         {
-            var manager = await db.Managers.FirstOrDefaultAsync(u => u.Id == registerRequest.ManagerId);
-            if(manager == null)
-            {
-                throw new Exception("Invalid Manager Id");
-            }
             var user = new Employee
             {
                 Id = Guid.Parse(identityUser.Id),
                 Name = registerRequest.Name,
                 ManagerId = registerRequest.ManagerId,
-                Manager = manager,
                 Age = registerRequest.Age,
                 IsActive = true
             };

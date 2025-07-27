@@ -37,8 +37,25 @@ namespace APIPractice.Repository
             await _db.SaveChangesAsync();
             return entity;
         }
-        public async Task UpdateAsync(Product existingProduct, UpdateProductDto updatedProduct)
+        public async Task UpdateAsync(Product existingProduct, UpdateProductDto updatedProduct, Guid managerId)
         {
+            if (existingProduct.Quantity != updatedProduct.Quantity && existingProduct.Quantity < updatedProduct.Quantity)
+            {
+                var stockUpdate = new StockUpdateHistory
+                {
+                    Id = Guid.NewGuid(),
+                    ProductId = existingProduct.Id,
+                    ManagerId = managerId,
+                    Quantity = updatedProduct.Quantity,
+                    TimeStamp = DateTime.UtcNow
+                };
+                await _db.StockUpdateHistories.AddAsync(stockUpdate);
+                await _db.SaveChangesAsync();
+            }
+            else if (existingProduct.Quantity > updatedProduct.Quantity)
+            {
+                throw new InvalidOperationException("Cannot reduce quantity below current stock.");
+            }
             existingProduct.Name = updatedProduct.Name;
             existingProduct.Price = updatedProduct.Price;
             existingProduct.Units = updatedProduct.Units;

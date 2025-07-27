@@ -20,47 +20,7 @@ namespace APIPractice.Services
             this.tokenRepository = tokenRepository;
             this.userRepository = userRepository;
         }
-        public async Task RegisterEmployee(RegisterEmployeeRequest registerEmployeeRequest)
-        {
-            var identityUser = new IdentityUser
-            {
-                Id = Guid.NewGuid().ToString(),
-                UserName = registerEmployeeRequest.UserName,
-                Email = registerEmployeeRequest.UserName
-            };
-            var identityResult = await userManager.CreateAsync(identityUser, registerEmployeeRequest.Password);
-            if (identityResult.Succeeded)
-            {
-                if (registerEmployeeRequest.Role != null && registerEmployeeRequest.Role.Any())
-                {
-                    identityResult = await userManager.AddToRoleAsync(identityUser, registerEmployeeRequest.Role);
-                    if (identityResult.Succeeded)
-                    {
-                        if(registerEmployeeRequest.Role.ToLower() == "manager")
-                        {
-                            await userRepository.AddManager(registerEmployeeRequest, identityUser);
-                        }
-                        else if (registerEmployeeRequest.Role.ToLower() == "employee")
-                        {
-                            await userRepository.AddEmployee(registerEmployeeRequest, identityUser);
-                        }
-                    }
-                    else
-                    {
-                        throw new Exception("Something Went Wrong");
-                    }
-                }
-                else
-                {
-                    throw new Exception("Something Went Wrong");
-                }
-            }
-            else
-            {
-                throw new Exception("Something Went Wrong");
-            }
-        }
-
+        
         public async Task RegisterCustomer(RegisterCustomerRequest registerCustomerRequest)
         {
             var identityUser = new IdentityUser
@@ -82,17 +42,17 @@ namespace APIPractice.Services
                     }
                     else
                     {
-                        throw new Exception("Failed To Add The Role");
+                        throw new Exception("Invalid Role");
                     }
                 }
                 else
                 {
-                    throw new Exception("User Already has a role");
+                    throw new Exception("Role not specified");
                 }
             }
             else
             {
-                throw new Exception("Something went wrong");
+                throw new Exception("Username already exists");
             }
 
 

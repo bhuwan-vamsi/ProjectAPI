@@ -36,9 +36,9 @@ namespace APIPractice
             builder.Services.AddScoped<IProductRepository<Product>, ProductRepository>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddScoped<IProductService, ProductService>();
-            
+
             //// Hide the below line once after running whole app
-            //builder.Services.AddScoped<ProductCsvImporter>();
+            builder.Services.AddScoped<ProductCsvImporter>();
             builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));

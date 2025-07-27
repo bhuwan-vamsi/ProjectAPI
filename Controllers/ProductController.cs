@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using APIPractice.Services.IService;
+using System.Security.Claims;
+using System.Linq;
+using Microsoft.Extensions.Configuration.EnvironmentVariables;
 
 namespace APIPractice.Controller
 {
@@ -68,7 +71,12 @@ namespace APIPractice.Controller
 
             try
             {
-                await productService.UpdateProductAsync(id, entity);
+                var managerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if(managerId == null)
+                {
+                    return BadRequest("Invalid Token");
+                }
+                await productService.UpdateProductAsync(id, entity, Guid.Parse(managerId));
                 return Ok("Updated Successfully");
             }
             catch (KeyNotFoundException ex)

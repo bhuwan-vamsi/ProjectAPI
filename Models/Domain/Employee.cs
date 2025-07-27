@@ -11,7 +11,7 @@ namespace APIPractice.Models.Domain
 
         public required string Name { get; set; }
 
-        public Guid ManagerId { get; set; }
+        public Guid? ManagerId { get; set; }
 
         public required int Age { get; set; }
 
@@ -20,6 +20,6 @@ namespace APIPractice.Models.Domain
 
         // Navigation Property
         [ForeignKey(nameof(ManagerId))]
-        public required Manager Manager { get; set; }
+        public Manager? Manager { get; set; }
     }
 }

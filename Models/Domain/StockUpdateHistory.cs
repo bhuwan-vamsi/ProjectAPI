@@ -19,9 +19,9 @@ namespace APIPractice.Models.Domain
 
         // Navigation Properties
         [ForeignKey(nameof(ProductId))]
-        public required Product Product { get; set; }
+        public virtual Product Product { get; set; }
 
         [ForeignKey(nameof(ManagerId))]
-        public required Manager Manager { get; set; }
+        public virtual Manager Manager { get; set; }
     }
 }

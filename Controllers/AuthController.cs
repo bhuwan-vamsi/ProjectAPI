@@ -21,25 +21,10 @@ namespace APIPractice.Controller
         {
             this.authService = authService;
         }
-        [HttpPost]
-        [Route("RegisterEmployee")]
-        //[Authorize(Roles ="Admin")]
-        public async Task<IActionResult> Regsiter([FromBody] RegisterEmployeeRequest registerEmployeeRequest)
-        {
-            try
-            {
-                await authService.RegisterEmployee(registerEmployeeRequest);
-                return Ok("User Registered");
-            }
-            catch (Exception ex)
-            {
-                    return BadRequest(ex.Message);
-            }
-        }
-
 
         [HttpPost]
         [Route("Login")]
+        [ValidateModel]
         public async Task<IActionResult> Login([FromBody] LoginRequest loginRequest)
         {
             try

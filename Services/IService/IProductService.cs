@@ -9,7 +9,7 @@ namespace APIPractice.Services.IService
         Task<List<ProductDto>> GetAllProductAsync();
         Task<ProductDto> GetProductAsync(Guid id);
         Task<Product> CreateProductAsync(CreateProductDto product);
-        Task UpdateProductAsync(Guid id, UpdateProductDto product);
+        Task UpdateProductAsync(Guid id, UpdateProductDto product, Guid managerId);
         Task DeleteProductAsync(Guid id);
     }
 }

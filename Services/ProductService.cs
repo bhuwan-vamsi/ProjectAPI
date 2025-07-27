@@ -44,14 +44,14 @@ namespace APIPractice.Services
             return mapper.Map<ProductDto>(product);
         }
 
-        public async Task UpdateProductAsync(Guid id, UpdateProductDto product)
+        public async Task UpdateProductAsync(Guid id, UpdateProductDto product, Guid managerId)
         {
             var existingProduct = await productRepo.GetAsync(id);
             if (existingProduct == null) 
             {
                 throw new KeyNotFoundException("Product Not Found");
             }
-            await productRepo.UpdateAsync(existingProduct,product);
+            await productRepo.UpdateAsync(existingProduct,product, managerId);
         }
     }
 }
