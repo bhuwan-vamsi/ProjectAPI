@@ -17,12 +17,12 @@ namespace APIPractice.Repository
         }
         public async Task<List<Product>> GetAllAsync()
         {
-            return await _db.Products.Include("Category").Where(x=> x.IsActive==true).ToListAsync();
+            return await _db.Products.Include("Category").ToListAsync();
         }
 
         public async Task<Product> GetAsync(Guid id)
         {
-            var product= await _db.Products.Include("Category").FirstOrDefaultAsync(u=> u.Id == id && u.IsActive==true);
+            var product= await _db.Products.Include("Category").FirstOrDefaultAsync(u=> u.Id == id);
             if (product == null)
             {
                 throw new KeyNotFoundException("Product Not Found");
