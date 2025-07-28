@@ -51,7 +51,7 @@ namespace APIPractice.Repository
         public async Task UpdateAsync(Product existingProduct, UpdateProductDto updatedProduct, Guid managerId)
         {
             if (existingProduct.Quantity != updatedProduct.Quantity && existingProduct.Quantity < updatedProduct.Quantity)
-        {
+            {
                 var stockUpdate = new StockUpdateHistory
                 {
                     Id = Guid.NewGuid(),
