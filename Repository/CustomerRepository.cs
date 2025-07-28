@@ -1,7 +1,9 @@
 ﻿using APIPractice.Data;
 using APIPractice.Models.Domain;
+using APIPractice.Models.DTO;
 using APIPractice.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace APIPractice.Repository
 {
@@ -15,12 +17,40 @@ namespace APIPractice.Repository
         }
         public async Task<Customer> GetById(Guid id)
         {
-            Customer? customer = await db.Customers.FirstOrDefaultAsync(x => x.Id == id);
-            if (customer == null)
+            try
             {
-                throw new Exception("User Not Found");
+                Customer? customer = await db.Customers.FirstOrDefaultAsync(x => x.Id == id);
+                if (customer == null)
+                {
+                    throw new Exception("User Not Found");
+                }
+                return customer;
+            }catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
-            return customer;
+        }
+
+        public async Task UpdateAsync(Guid id, EditProfileRequest request)
+        {
+            try
+            {
+                Customer existingCustomer = await db.Customers.FirstOrDefaultAsync(u => u.Id == id);
+                if (existingCustomer == null)
+                {
+                    throw new Exception("The user is not found");
+                }
+                existingCustomer.Name = request.Name;
+                existingCustomer.Address = request.Address;
+                existingCustomer.Phone = request.Phone;
+                db.Customers.Update(existingCustomer);
+                await db.SaveChangesAsync();
+            }
+            catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+              
         }
     }
 }
