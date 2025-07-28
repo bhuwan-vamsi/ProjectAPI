@@ -123,7 +123,18 @@ namespace APIPractice.Services
             }
         }
 
+        public async Task<List<OrderDto>> GetBilledOrdersAsync()
+        {
+            var orders = await orderRepository.GetOrdersByStatusAsync("Billed");
+            return mapper.Map<List<OrderDto>>(orders);
+        }
 
+        public async Task<List<OrderDto>> GetDeliveredOrdersByEmployeeAsync(ClaimsIdentity user)
+        {
+            var employeeId = Guid.Parse(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+            var orders = await orderRepository.GetDeliveredOrdersByEmployeeAsync(employeeId);
+            return mapper.Map<List<OrderDto>>(orders);
+        }
     }
 }
 

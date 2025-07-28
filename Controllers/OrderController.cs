@@ -66,6 +66,23 @@ namespace APIPractice.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpGet("BilledOrders")]
+        [Authorize(Roles = "Employee")]
+        public async Task<IActionResult> GetBilledOrders()
+        {
+            var orders = await orderService.GetBilledOrdersAsync();
+            return Ok(orders);
+        }
+
+        [HttpGet("DeliveredByMe")]
+        [Authorize(Roles = "Employee")]
+        public async Task<IActionResult> GetDeliveredOrdersByMe()
+        {
+            var identity = (ClaimsIdentity)User.Identity;
+            var orders = await orderService.GetDeliveredOrdersByEmployeeAsync(identity);
+            return Ok(orders);
+        }
     }
 }
 ///<summar>

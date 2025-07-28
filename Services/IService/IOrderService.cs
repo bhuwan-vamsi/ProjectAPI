@@ -11,5 +11,8 @@ namespace APIPractice.Services.IService
         public Task<List<OrderHistoryDto>> ViewHistory(ClaimsIdentity claimsIdentity);
 
         public Task<OrderHistoryDto> ViewOrderById(Guid id, ClaimsIdentity claimsIdentity);
+
+        public Task<List<OrderDto>> GetBilledOrdersAsync();
+        public Task<List<OrderDto>> GetDeliveredOrdersByEmployeeAsync(ClaimsIdentity user);
     }
 }

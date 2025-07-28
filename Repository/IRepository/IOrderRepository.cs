@@ -11,5 +11,8 @@ namespace APIPractice.Repository.IRepository
         public Task<Order> GetOrderByIdAsync(Guid orderId, Guid customerId);
 
         public Task DeleteOrderOfCustomer(Guid customerId);
+
+        public Task<List<Order>> GetOrdersByStatusAsync(string status);
+        public Task<List<Order>> GetDeliveredOrdersByEmployeeAsync(Guid employeeId);
     }
 }

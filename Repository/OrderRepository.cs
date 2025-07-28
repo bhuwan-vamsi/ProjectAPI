@@ -78,8 +78,29 @@ namespace APIPractice.Repository
             db.Orders.Update(existingOrder);
 
             await db.SaveChangesAsync();
-
-
         }
+
+        public async Task<List<Order>> GetOrdersByStatusAsync(string status)
+        {
+            var statusEntity = await db.OrderStatuses.FirstOrDefaultAsync(s => s.Name == status);
+            return await db.Orders
+                .Where(o => o.OrderStatus == statusEntity)
+                .Include(o => o.OrderItems)
+                .ToListAsync();
+        }
+
+        public async Task<List<Order>> GetDeliveredOrdersByEmployeeAsync(Guid employeeId)
+        {
+            var orderIds = await db.TasksHistory
+                .Where(t => t.EmployeeId == employeeId && t.CompletedAt != null)
+                .Select(t => t.OrderId)
+                .ToListAsync();
+
+            return await db.Orders
+                .Where(o => orderIds.Contains(o.Id))
+                .Include(o => o.OrderItems)
+                .ToListAsync();
+        }
+
     }
 }
