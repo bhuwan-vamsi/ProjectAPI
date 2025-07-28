@@ -2,10 +2,17 @@
 
 namespace APIPractice.Models.DTO
 {
-    public class RegisterEmployeeRequest : RegisterManagerRequest
+    public class RegisterEmployeeRequest
     {
         [Required]
-        public int Age { get; set; }
-        public Guid ManagerId { get; set; }
+        [DataType(DataType.EmailAddress)]
+        public required string UserName { get; set; }
+        [Required]
+        [DataType(DataType.Password)]
+        public required string Password { get; set; }
+        [Required]
+        public required string Role { get; set; }
+        [Required]
+        public required string Name { get; set; }
     }
 }

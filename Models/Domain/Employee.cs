@@ -13,8 +13,6 @@ namespace APIPractice.Models.Domain
 
         public Guid? ManagerId { get; set; }
 
-        public required int Age { get; set; }
-
         public required bool IsActive { get; set; }
 
 

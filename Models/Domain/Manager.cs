@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace APIPractice.Models.Domain
 {
@@ -11,8 +12,9 @@ namespace APIPractice.Models.Domain
 
 
         // Reverse Navigation Properties
+        [JsonIgnore]
         public ICollection<Employee> Employees { get; set; } = new List<Employee>();
-
-        // public ICollection<StockUpdateHistory> StocksHistory { get; set; } = new List<StockUpdateHistory>();
+        [JsonIgnore]
+        public ICollection<StockUpdateHistory> StocksHistory { get; set; } = new List<StockUpdateHistory>();
     }
 }

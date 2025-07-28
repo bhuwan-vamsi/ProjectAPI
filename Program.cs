@@ -44,6 +44,7 @@ namespace APIPractice
             builder.Services.AddScoped<IOrderStatusRepository, OrderStatusRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -53,6 +54,7 @@ namespace APIPractice
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IAdminService, AdminService>();
 
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -124,7 +126,7 @@ namespace APIPractice
             //    importer.ImportProductsFromCsvAsync(csvPath).GetAwaiter().GetResult();
             //}
 
-            // Configure the HTTP request pipeline.
+            //Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
