@@ -15,14 +15,25 @@ namespace APIPractice.Repository
         {
             _db = db;
         }
-        public async Task<List<Product>> GetAllAsync()
+        public async Task<List<Product>> GetAllAsync(string? categoryName = null, string? filterQuery = null)
         {
-            return await _db.Products.Include("Category").ToListAsync();
+            var products = _db.Products.Include("Category").Where(x => x.IsActive == true).AsQueryable();
+
+            // filtering
+            if(!string.IsNullOrWhiteSpace(categoryName))
+            {
+                products = products.Where(x => x.Category.Equals(categoryName));
+            }
+            if (!string.IsNullOrWhiteSpace(filterQuery))
+            {
+                products = products.Where(x => x.Name.Contains(filterQuery));
+            }
+            return await products.ToListAsync();
         }
 
         public async Task<Product> GetAsync(Guid id)
         {
-            var product= await _db.Products.Include("Category").FirstOrDefaultAsync(u=> u.Id == id);
+            var product= await _db.Products.Include("Category").FirstOrDefaultAsync(u=> u.Id == id && u.IsActive==true);
             if (product == null)
             {
                 throw new KeyNotFoundException("Product Not Found");
@@ -40,7 +51,7 @@ namespace APIPractice.Repository
         public async Task UpdateAsync(Product existingProduct, UpdateProductDto updatedProduct, Guid managerId)
         {
             if (existingProduct.Quantity != updatedProduct.Quantity && existingProduct.Quantity < updatedProduct.Quantity)
-            {
+        {
                 var stockUpdate = new StockUpdateHistory
                 {
                     Id = Guid.NewGuid(),

@@ -367,3 +367,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Controllers/TaskHistoryController.cs
+/Models/DTO/TaskHistoryDto.cs
+/Repository/IRepository/ITaskHistoryRepository.cs
+/Repository/TaskHistoryRepository.cs
+/Services/IService/ITaskHistoryService.cs
+/Services/TaskHistoryService.cs
+/SQLQuery2.sql

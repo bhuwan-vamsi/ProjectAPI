@@ -33,9 +33,9 @@ namespace APIPractice.Services
             await productRepo.DeleteAsync(product);
         }
 
-        public async Task<List<ProductDto>> GetAllProductAsync()
+        public async Task<List<ProductDto>> GetAllProductAsync(string? categoryName, string? filterQuery)
         {
-            var products = await productRepo.GetAllAsync();
+            var products = await productRepo.GetAllAsync(categoryName, filterQuery);
             return mapper.Map<List<ProductDto>>(products);
         }
         public async Task<ProductDto> GetProductAsync(Guid id)

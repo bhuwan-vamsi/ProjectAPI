@@ -1,8 +1,9 @@
-﻿using AutoMapper;
-using APIPractice.CustomAcitonFilters;
+﻿using APIPractice.CustomAcitonFilters;
 using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
 using APIPractice.Repository.IRepository;
+using APIPractice.Services.IService;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -26,14 +27,38 @@ namespace APIPractice.Controller
         }
         [HttpGet]
         [ValidateModel]
-        [Authorize(Roles = "Employee,Manager")]
-        public async Task<IActionResult> GetAll()
+        [Authorize(Roles = "Customer,Manager")]
+        public async Task<IActionResult> GetAll([FromQuery] string? categoryName, [FromQuery] string? filterQuery)
         {
             try
             {
-                return Ok(await productService.GetAllProductAsync());
+                var products = await productService.GetAllProductAsync(categoryName, filterQuery);
+
+                var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
+                if (role == "Customer")
+                {
+                    var productsCustomerDto = products.Select(p => new ProductCustomerDto
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Price = p.Price,
+                        Units = p.Units,
+                        ImageUrl = p.ImageUrl,
+                        Category = p.Category,
+                    }).ToList();
+
+                    return Ok(productsCustomerDto);
+                }
+
+                if(role == "Manager")
+                {
+                    return Ok(products);
+                }
+
+                return Forbid();
             }
-            catch (KeyNotFoundException ex) 
+            catch (KeyNotFoundException ex)
             {
                 return BadRequest(ex.Message);
             }
