@@ -33,5 +33,21 @@ namespace APIPractice.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost]
+        [Route("EditProfile")]
+        [Authorize(Roles = "Customer")]
+        public async Task<IActionResult> EditProfile([FromBody] EditProfileRequest request)
+        {
+            try
+            {
+                var identity = (ClaimsIdentity)User.Identity;
+                await customerService.EditProfile(identity, request);
+                return Ok("Successfully Updated");
+            }catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
