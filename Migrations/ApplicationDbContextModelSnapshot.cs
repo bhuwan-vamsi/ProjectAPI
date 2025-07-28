@@ -153,6 +153,9 @@ namespace APIPractice.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("DeliveredAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("OrderStatusId")
                         .HasColumnType("uniqueidentifier");
 
@@ -386,7 +389,7 @@ namespace APIPractice.Migrations
             modelBuilder.Entity("APIPractice.Models.Domain.StockUpdateHistory", b =>
                 {
                     b.HasOne("APIPractice.Models.Domain.Manager", "Manager")
-                        .WithMany()
+                        .WithMany("StocksHistory")
                         .HasForeignKey("ManagerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -434,6 +437,8 @@ namespace APIPractice.Migrations
             modelBuilder.Entity("APIPractice.Models.Domain.Manager", b =>
                 {
                     b.Navigation("Employees");
+
+                    b.Navigation("StocksHistory");
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.Order", b =>

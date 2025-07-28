@@ -68,6 +68,7 @@ namespace APIPractice.Services
                     OrderStatusId = StatusId,
                     OrderStatus = await orderStatusRepository.GetOrderStatusById(StatusId),
                     CreatedAt = DateTime.UtcNow,
+                    DeliveredAt = null,
                     Customer = await customerRepository.GetById(userId),
                     OrderItems = new List<OrderItem>()
                 };
