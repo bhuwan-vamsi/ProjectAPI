@@ -21,15 +21,13 @@ namespace APIPractice.Repository
             {
                 Id = Guid.Parse(identityUser.Id),
                 Name = registerRequest.Name,
-                ManagerId = registerRequest.ManagerId,
-                Age = registerRequest.Age,
                 IsActive = true
             };
             await db.Employees.AddAsync(user);
             await db.SaveChangesAsync();
             return user;
         }
-        public async Task<Manager> AddManager(RegisterManagerRequest registerRequest, IdentityUser identityUser)
+        public async Task<Manager> AddManager(RegisterEmployeeRequest registerRequest, IdentityUser identityUser)
         {
             var user = new Manager
             {

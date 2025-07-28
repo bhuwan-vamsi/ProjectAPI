@@ -2,7 +2,7 @@
 
 namespace APIPractice.Models.DTO
 {
-    public class RegisterCustomerRequest : RegisterManagerRequest
+    public class RegisterCustomerRequest : RegisterEmployeeRequest
     {
         [Required]
         [DataType(DataType.PhoneNumber)]

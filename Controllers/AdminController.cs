@@ -14,7 +14,7 @@ namespace APIPractice.Controllers
     {
         private readonly IAdminService adminService;
 
-        public AdminController(IAuthService authService, IAdminService adminService)
+        public AdminController(IAdminService adminService)
         {
             this.adminService = adminService;
         }

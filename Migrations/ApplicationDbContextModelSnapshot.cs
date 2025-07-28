@@ -106,13 +106,10 @@ namespace APIPractice.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("ManagerId")
+                    b.Property<Guid?>("ManagerId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
@@ -294,7 +291,7 @@ namespace APIPractice.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("StockUpdateHistory");
+                    b.ToTable("StockUpdateHistories");
                 });
 
             modelBuilder.Entity("APIPractice.Models.Domain.TaskHistory", b =>
@@ -334,9 +331,7 @@ namespace APIPractice.Migrations
                 {
                     b.HasOne("APIPractice.Models.Domain.Manager", "Manager")
                         .WithMany("Employees")
-                        .HasForeignKey("ManagerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ManagerId");
 
                     b.Navigation("Manager");
                 });

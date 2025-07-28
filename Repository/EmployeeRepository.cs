@@ -26,12 +26,12 @@ namespace APIPractice.Repository
 
         public async Task<List<Employee>> GetAllEmployeesAsync()
         {
-            return await db.Employees.Where(x => x.IsActive == true).ToListAsync();
+            return await db.Employees.Include("Manager").Where(x => x.IsActive == true).ToListAsync();
         }
 
         public async Task<Employee> GetEmployeeByIdAsync(Guid id)
         {
-            var employee = await db.Employees.FirstOrDefaultAsync(x=> x.Id == id);
+            var employee = await db.Employees.Include("Manager").FirstOrDefaultAsync(x=> x.Id == id);
             if (employee == null)
             {
                 throw new KeyNotFoundException("Employee Not Found");
@@ -46,12 +46,19 @@ namespace APIPractice.Repository
             {
                 throw new KeyNotFoundException("Employee Not Found");
             }
-            var manager = await db.Managers.FirstOrDefaultAsync(x => x.Id == updateEmployee.ManagerId);
-            if (manager == null) 
+            if(updateEmployee.ManagerId == null)
             {
-                throw new KeyNotFoundException("Manager Not Found");
+                employee.ManagerId = null;
             }
-            employee.ManagerId = updateEmployee.ManagerId;
+            else
+            {
+                var manager = await db.Managers.FirstOrDefaultAsync(x => x.Id == updateEmployee.ManagerId);
+                if (manager == null)
+                {
+                    throw new KeyNotFoundException("Manager Not Found");
+                }
+                employee.ManagerId = updateEmployee.ManagerId;
+            }
             db.Employees.Update(employee);
             await db.SaveChangesAsync();
         }
