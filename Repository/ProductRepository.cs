@@ -79,7 +79,11 @@ namespace APIPractice.Repository
         }
         public async Task UpdateQuantityAsync(Guid id, Product product)
         {
-            Product existingProduct = await _db.Products.Include("Category").FirstOrDefaultAsync(p => p.Id == id);
+            var existingProduct = _db.Products.Include("Category").FirstOrDefault(p => p.Id == id);
+            if(existingProduct == null)
+            {
+                throw new KeyNotFoundException("Product Not Found");
+            }
             existingProduct.Quantity = product.Quantity;
             _db.Products.Update(existingProduct);
             await _db.SaveChangesAsync();
