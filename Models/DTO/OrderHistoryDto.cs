@@ -5,13 +5,14 @@ namespace APIPractice.Models.DTO
 {
     public class OrderHistoryDto
     {
-        public Guid Id { get; set; }
-        public Guid CustomerId { get; set; }
+        public required Guid Id { get; set; }
+        public required DateTime CreatedAt { get; set; }
+
+        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
         public decimal Amount { get; set; }
 
-        public required OrderStatus OrderStatus { get; set; }
+        public required string Status { get; set; }
 
-        public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
     }
 }

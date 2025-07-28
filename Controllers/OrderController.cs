@@ -59,7 +59,7 @@ namespace APIPractice.Controllers
             try
             {
                 var identityUser = (ClaimsIdentity)User.Identity;
-                Order order = await orderService.ViewOrderById(id,identityUser);
+                OrderHistoryDto order = await orderService.ViewOrderById(id,identityUser);
                 return Ok(order);
             }catch(Exception ex)
             {

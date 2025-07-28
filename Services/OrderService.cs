@@ -42,9 +42,20 @@ namespace APIPractice.Services
                 {
                     var orderItem = mapper.Map<OrderItem>(purchaseOrder);
                     orderItem.OrderId = orderId;
-                    orderItem.Product = await productRepository.GetAsync(purchaseOrder.ProductId);
-                    orderItemList.Add(orderItem);
-                    orderAmount += purchaseOrder.UnitPrice * purchaseOrder.Quantity;
+                    Product product= await productRepository.GetAsync(purchaseOrder.ProductId);
+                    if(product.Quantity < purchaseOrder.Quantity)
+                    {
+                        throw new Exception("The Order is out of stock");
+                    }
+                    else
+                    {
+                        product.Quantity = product.Quantity - purchaseOrder.Quantity;
+                        await productRepository.UpdateQuantityAsync(purchaseOrder.ProductId, product);
+                        orderItem.Product = product;
+                        orderItemList.Add(orderItem);
+                        orderAmount += purchaseOrder.UnitPrice * purchaseOrder.Quantity;
+                    }
+                        
                 }
 
                 var StatusId = await orderStatusRepository.GetIdOfStatus("billed");
@@ -79,8 +90,8 @@ namespace APIPractice.Services
                 List<OrderHistoryDto> history = new List<OrderHistoryDto>();
                 foreach (Order order in orders)
                 {
-                    history.Add(new OrderHistoryDto { Id = order.Id, Amount=order.Amount, CustomerId=order.CustomerId, OrderItems = order.OrderItems,
-                    OrderStatus = order.OrderStatus});
+                    history.Add(new OrderHistoryDto { Id = order.Id, Amount=order.Amount, CreatedAt=order.CreatedAt, OrderItems = order.OrderItems,
+                    Status = order.OrderStatus.Name});
                 }
                 return history;
             }catch(Exception ex)
@@ -90,13 +101,21 @@ namespace APIPractice.Services
 
         }
 
-        public async Task<Order> ViewOrderById(Guid orderId, ClaimsIdentity identity)
+        public async Task<OrderHistoryDto> ViewOrderById(Guid orderId, ClaimsIdentity identity)
         {
             try
             {
                 Guid userId = Guid.Parse(identity.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var order = await orderRepository.GetOrderByIdAsync(orderId, userId);
-                return order;
+                OrderHistoryDto history = new OrderHistoryDto
+                {
+                    Id = order.Id,
+                    Amount = order.Amount,
+                    CreatedAt = order.CreatedAt,
+                    OrderItems = order.OrderItems,
+                    Status = order.OrderStatus.Name
+                };
+                return history;
             }catch (Exception ex)
             {
                 throw new Exception(ex.Message);

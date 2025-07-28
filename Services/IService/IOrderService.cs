@@ -10,6 +10,6 @@ namespace APIPractice.Services.IService
 
         public Task<List<OrderHistoryDto>> ViewHistory(ClaimsIdentity claimsIdentity);
 
-        public Task<Order> ViewOrderById(Guid id, ClaimsIdentity claimsIdentity);
+        public Task<OrderHistoryDto> ViewOrderById(Guid id, ClaimsIdentity claimsIdentity);
     }
 }

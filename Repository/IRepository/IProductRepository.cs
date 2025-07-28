@@ -9,6 +9,7 @@ namespace APIPractice.Repository.IRepository
         Task<Product> GetAsync(Guid id);
         Task<Product> CreateAsync(Product entity);
         Task UpdateAsync(Product existing, UpdateProductDto entity, Guid managerId);
+        Task UpdateQuantityAsync(Guid id, Product product);
         Task DeleteAsync(Product entity);
     }
 }

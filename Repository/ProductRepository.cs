@@ -66,6 +66,14 @@ namespace APIPractice.Repository
             _db.Products.Update(existingProduct);
             await _db.SaveChangesAsync();
         }
+        public async Task UpdateQuantityAsync(Guid id, Product product)
+        {
+            Product existingProduct = await _db.Products.Include("Category").FirstOrDefaultAsync(p => p.Id == id);
+            existingProduct.Quantity = product.Quantity;
+            _db.Products.Update(existingProduct);
+            await _db.SaveChangesAsync();
+        }
+
         public async Task DeleteAsync(Product product)
         {
             product.IsActive = false;

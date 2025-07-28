@@ -46,7 +46,7 @@ namespace APIPractice
             builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
 
             builder.Services.AddScoped<IProductService, ProductService>();
-
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
             //// Hide the below line once after running whole app
             //builder.Services.AddScoped<ProductCsvImporter>();
             builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
