@@ -5,12 +5,14 @@ using APIPractice.Repository;
 using APIPractice.Repository.IRepository;
 using APIPractice.Services.IService;
 using AutoMapper;
+using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
 
 namespace APIPractice.Services
 {
     public class OrderService : IOrderService
     {
+
         private readonly IMapper mapper;
         private readonly IOrderItemRepository orderItemRepository;
         private readonly ICustomerRepository customerRepository;
@@ -51,7 +53,7 @@ namespace APIPractice.Services
                     await productRepository.UpdateQuantityAsync(purchaseOrder.ProductId, product);
                     orderItem.Product = product;
                     orderItemList.Add(orderItem);
-                    orderAmount += purchaseOrder.UnitPrice * purchaseOrder.Quantity;
+                    orderAmount += (purchaseOrder.UnitPrice * purchaseOrder.Quantity) + 46;
                 }
                         
             }
@@ -83,8 +85,12 @@ namespace APIPractice.Services
             List<OrderHistoryDto> history = new List<OrderHistoryDto>();
             foreach (Order order in orders)
             {
-                history.Add(new OrderHistoryDto { Id = order.Id, Amount=order.Amount, CreatedAt=order.CreatedAt, OrderItems = order.OrderItems,
-                Status = order.OrderStatus.Name});
+                history.Add(new OrderHistoryDto { Id = order.Id, Status = order.OrderStatus.Name, 
+                    Name =order.Customer.Name, Mobile=order.Customer.Phone , Address = order.Customer.Address,CreatedAt=order.CreatedAt,
+                    DeliveredAt=order.DeliveredAt, Items = AddOrderItems(order), TotalItems = order.OrderItems.Count,
+                    Billing = new BillingDto { ItemTotal = order.Amount - 46, DeliveryFee = 40, PlatformFee = 6
+                    ,TotalBill=order.Amount}
+                });
             }
             return history;
 
@@ -96,8 +102,25 @@ namespace APIPractice.Services
             {
                 Guid userId = Guid.Parse(identity.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var order = await orderRepository.GetOrderByIdAsync(orderId, userId);
-                OrderHistoryDto history = mapper.Map<OrderHistoryDto>(order);
-                history.Status = order.OrderStatus.Name;
+                OrderHistoryDto history = new OrderHistoryDto
+                {
+                    Id = order.Id,
+                    Status = order.OrderStatus.Name,
+                    Name = order.Customer.Name,
+                    Mobile = order.Customer.Phone,
+                    Address = order.Customer.Address,
+                    CreatedAt = order.CreatedAt,
+                    DeliveredAt = order.DeliveredAt,
+                    Items = AddOrderItems(order),
+                    TotalItems = order.OrderItems.Count,
+                    Billing = new BillingDto
+                    {
+                        ItemTotal = order.Amount - 46,
+                        DeliveryFee = 40,
+                        PlatformFee = 6,
+                        TotalBill = order.Amount
+                    }
+                };
                 return history;
             }catch (Exception ex)
             {
@@ -116,6 +139,24 @@ namespace APIPractice.Services
             var employeeId = Guid.Parse(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var orders = await orderRepository.GetDeliveredOrdersByEmployeeAsync(employeeId);
             return mapper.Map<List<PurchaseOrderRequest>>(orders);
+        }
+
+        // Helper Functions
+        private ICollection<OrderResponseDto> AddOrderItems(Order order)
+        {
+            List<OrderResponseDto> OrderItems = new List<OrderResponseDto>();
+            foreach (OrderItem item in order.OrderItems)
+            {
+                OrderItems.Add(new OrderResponseDto
+                {
+                    Name = item.Product.Name,
+                    ImageUrl = item.Product.ImageUrl,
+                    Quantity = item.Quantity,
+                    ProductId = item.ProductId,
+                    UnitPrice = item.Product.Price
+                });
+            }
+            return OrderItems;
         }
     }
 }
