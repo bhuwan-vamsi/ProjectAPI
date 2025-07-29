@@ -1,4 +1,5 @@
-﻿using APIPractice.Models.Domain;
+﻿using APIPractice.CustomAcitonFilters;
+using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
 using APIPractice.Services.IService;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +21,7 @@ namespace APIPractice.Controllers
         }
         [HttpPost]
         [Route("CheckOut")]
+        [ValidateModel]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> CheckOut([FromBody]PurchaseOrderRequest orders)
         {
@@ -37,6 +39,7 @@ namespace APIPractice.Controllers
 
         [HttpGet]
         [Route("ViewHistory")]
+        [ValidateModel]
         [Authorize(Roles = "Customer")]
         public async Task<IActionResult> ViewHistory()
         {
@@ -53,6 +56,7 @@ namespace APIPractice.Controllers
 
         [HttpGet]
         [Route("VewOrder/{id:Guid}")]
+        [ValidateModel]
         [Authorize(Roles ="Customer")]
         public async Task<IActionResult> ViewOrderById([FromRoute] Guid id)
         {
@@ -68,6 +72,7 @@ namespace APIPractice.Controllers
         }
 
         [HttpGet("BilledOrders")]
+        [ValidateModel]
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> GetBilledOrders()
         {
@@ -76,6 +81,7 @@ namespace APIPractice.Controllers
         }
 
         [HttpGet("DeliveredByMe")]
+        [ValidateModel]
         [Authorize(Roles = "Employee")]
         public async Task<IActionResult> GetDeliveredOrdersByMe()
         {
