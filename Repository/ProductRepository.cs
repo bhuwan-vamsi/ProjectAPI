@@ -5,6 +5,7 @@ using APIPractice.Repository.IRepository;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 
 namespace APIPractice.Repository
@@ -83,6 +84,7 @@ namespace APIPractice.Repository
                 existingProduct.CategoryId = updatedProduct.CategoryId;
                 _db.Products.Update(existingProduct);
                 await _db.SaveChangesAsync();
+                await transaction.CommitAsync();
             }
             catch
             {
@@ -105,9 +107,13 @@ namespace APIPractice.Repository
 
         public async Task DeleteAsync(Product product)
         {
-            product.IsActive = false;
+            product.IsActive = !product.IsActive;
             _db.Products.Update(product);
             await _db.SaveChangesAsync();
+        }
+        public async Task<List<Category>> GetAllCategoriesAsync()
+        {
+            return await _db.Categories.ToListAsync();
         }
     }
 }

@@ -56,6 +56,7 @@ namespace APIPractice
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IAdminService, AdminService>();
+            builder.Services.AddScoped<IStatisticService, StatisticService>();
 
 
             builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
@@ -117,7 +118,7 @@ namespace APIPractice
 
             var app = builder.Build();
 
-            app.UseMiddleware<ExceptionHandlingMiddleware>();
+            //app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             //using (var scope = app.Services.CreateScope())
             //{
