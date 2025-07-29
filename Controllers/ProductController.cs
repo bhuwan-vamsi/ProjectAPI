@@ -25,6 +25,7 @@ namespace APIPractice.Controller
         {
             this.productService = productService;
         }
+
         [HttpGet]
         [ValidateModel]
         [Authorize(Roles = "Customer,Manager")]
@@ -64,6 +65,7 @@ namespace APIPractice.Controller
             }
             
         }
+
         [HttpGet]
         [Route("{id:Guid}")]
         [ValidateModel]
@@ -79,6 +81,7 @@ namespace APIPractice.Controller
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpPost]
         [ValidateModel]
         [Authorize(Roles = "Manager")]
@@ -87,6 +90,7 @@ namespace APIPractice.Controller
             var product = await productService.CreateProductAsync(entity);
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, entity);
         }
+
         [HttpPut]
         [Route("{id:Guid}")]
         [ValidateModel]
@@ -109,6 +113,7 @@ namespace APIPractice.Controller
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpDelete]
         [Route("{id:Guid}")]
         [ValidateModel]
