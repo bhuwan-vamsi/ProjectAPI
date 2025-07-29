@@ -21,7 +21,7 @@ namespace APIPractice.Controllers
         [HttpPost]
         [Route("CheckOut")]
         [Authorize(Roles = "Customer")]
-        public async Task<IActionResult> CheckOut([FromBody]OrderDto orders)
+        public async Task<IActionResult> CheckOut([FromBody]PurchaseOrderRequest orders)
         {
             try
             {

@@ -29,7 +29,7 @@ namespace APIPractice.Services
             this.orderStatusRepository = orderStatusRepository;
             this.productRepository = productRepository;
         }
-        public async Task CheckOut(OrderDto purchaseOrders, ClaimsIdentity identity)
+        public async Task CheckOut(PurchaseOrderRequest purchaseOrders, ClaimsIdentity identity)
         {
             try
             {
@@ -123,17 +123,17 @@ namespace APIPractice.Services
             }
         }
 
-        public async Task<List<OrderDto>> GetBilledOrdersAsync()
+        public async Task<List<PurchaseOrderRequest>> GetBilledOrdersAsync()
         {
             var orders = await orderRepository.GetOrdersByStatusAsync("Billed");
-            return mapper.Map<List<OrderDto>>(orders);
+            return mapper.Map<List<PurchaseOrderRequest>>(orders);
         }
 
-        public async Task<List<OrderDto>> GetDeliveredOrdersByEmployeeAsync(ClaimsIdentity user)
+        public async Task<List<PurchaseOrderRequest>> GetDeliveredOrdersByEmployeeAsync(ClaimsIdentity user)
         {
             var employeeId = Guid.Parse(user.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
             var orders = await orderRepository.GetDeliveredOrdersByEmployeeAsync(employeeId);
-            return mapper.Map<List<OrderDto>>(orders);
+            return mapper.Map<List<PurchaseOrderRequest>>(orders);
         }
     }
 }
