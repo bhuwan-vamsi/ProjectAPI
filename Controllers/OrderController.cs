@@ -47,8 +47,9 @@ namespace APIPractice.Controllers
         {
             try
             {
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
-                List<OrderHistoryDto> history = await orderService.ViewHistory(claimsIdentity);
+                var userId = Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id)
+                    ? id : throw new UnauthorizedAccessException("Invalid or missing user ID.");
+                List<OrderHistoryDto> history = await orderService.ViewHistory(userId);
                 return Ok(history);
             }catch(Exception ex)
             {

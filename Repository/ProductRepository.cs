@@ -47,9 +47,17 @@ namespace APIPractice.Repository
             return product;
         }
 
-        public async Task<Product> CreateAsync(Product entity)
+        public async Task<Product> CreateAsync(Product entity, Guid managerId)
         {
             entity.IsActive = true;
+            var stockUpdate = new StockUpdateHistory
+            {
+                Id = Guid.NewGuid(),
+                ProductId = entity.Id,
+                ManagerId = managerId,
+                Quantity = entity.Quantity,
+                UpdatedAt = DateTime.Now
+            };
             await _db.Products.AddAsync(entity);
             await _db.SaveChangesAsync();
             return entity;
@@ -82,6 +90,8 @@ namespace APIPractice.Repository
                 existingProduct.Threshold = updatedProduct.Threshold;
                 existingProduct.ImageUrl = updatedProduct.ImageUrl;
                 existingProduct.CategoryId = updatedProduct.CategoryId;
+                _db.Products.Update(existingProduct);
+                await _db.SaveChangesAsync();
             });
         }
         public async Task UpdateQuantityAsync(Guid id, Product product)

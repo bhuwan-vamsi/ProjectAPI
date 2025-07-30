@@ -1,4 +1,5 @@
-﻿using APIPractice.Data;
+﻿using APIPractice.CustomAcitonFilters;
+using APIPractice.Data;
 using APIPractice.Models.Domain;
 using APIPractice.Models.DTO.TaskHistory;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +18,7 @@ namespace APIPractice.Controllers
         }
 
         [HttpGet]
+        [ValidateModel]
         public IActionResult GetAll()
         {
 
@@ -40,6 +42,7 @@ namespace APIPractice.Controllers
 
         [HttpGet]
         [Route("{id:Guid}")]
+        [ValidateModel]
         public IActionResult GetById([FromRoute] Guid id)
         {
             //var taskHistory = dbContext.TasksHistory.Find(id);
@@ -64,6 +67,7 @@ namespace APIPractice.Controllers
         }
 
         [HttpPost]
+        [ValidateModel]
         public IActionResult Create([FromBody] CreateTaskHistoryDto taskHistoryDto)
         {
             var taskHistory = new TaskHistory
@@ -80,6 +84,7 @@ namespace APIPractice.Controllers
         }
 
         [HttpPut]
+        [ValidateModel]
         [Route("{id:Guid}")]
         public IActionResult Update([FromRoute] Guid id)
         {
@@ -108,6 +113,7 @@ namespace APIPractice.Controllers
 
         [HttpDelete]
         [Route("{id:Guid}")]
+        [ValidateModel]
         public IActionResult Delete([FromRoute] Guid id)
         {
             var taskHistory = dbContext.TasksHistory.FirstOrDefault(x => x.Id == id);

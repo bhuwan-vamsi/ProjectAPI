@@ -5,6 +5,7 @@ namespace APIPractice.Models.DTO
 {
     public class ProductDto : ProductCustomerDto
     {
+        public required int Quantity { get; set; }
         public int Threshold { get; set; }
         public bool IsActive { get; set; }
     }

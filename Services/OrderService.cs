@@ -81,9 +81,8 @@ namespace APIPractice.Services
             await orderRepository.UpdateAsync(orderId,order);
         }
 
-        public async Task<List<OrderHistoryDto>> ViewHistory(ClaimsIdentity identity)
+        public async Task<List<OrderHistoryDto>> ViewHistory(Guid userId)
         {
-            var userId = Guid.Parse(identity.FindFirst(ClaimTypes.NameIdentifier).Value);
             List<Order> orders = await orderRepository.GetOrderHistoryOfCustomer(userId);
             List<OrderHistoryDto> history = new List<OrderHistoryDto>();
             foreach (Order order in orders)

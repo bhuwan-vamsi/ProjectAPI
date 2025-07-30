@@ -1,17 +1,9 @@
 ﻿using APIPractice.CustomAcitonFilters;
-using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
-using APIPractice.Repository.IRepository;
 using APIPractice.Services.IService;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using APIPractice.Services.IService;
 using System.Security.Claims;
-using System.Linq;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using Microsoft.AspNet.Identity;
 
 namespace APIPractice.Controller
@@ -75,7 +67,7 @@ namespace APIPractice.Controller
         {
             try
             {
-                var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value??throw new UnauthorizedAccessException("Invalid User");
                 var product = await productService.GetProductAsync(id, role);
                 if (role == "Customer")
                 {
@@ -107,7 +99,8 @@ namespace APIPractice.Controller
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto entity)
         {
-            var product = await productService.CreateProductAsync(entity);
+            var managerId = User.FindFirstValue(ClaimTypes.NameIdentifier)??throw new UnauthorizedAccessException("Invalid User");
+            var product = await productService.CreateProductAsync(entity, Guid.Parse(managerId));
             return CreatedAtAction(nameof(GetById), new { id = product.Id }, entity);
         }
 

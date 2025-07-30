@@ -17,10 +17,10 @@ namespace APIPractice.Services
             this.productRepo = productRepo;
             this.mapper = mapper;
         }
-        public async Task<Product> CreateProductAsync(CreateProductDto createProductDto)
+        public async Task<Product> CreateProductAsync(CreateProductDto createProductDto, Guid managerId)
         {
             var product = mapper.Map<Product>(createProductDto);
-            return (await productRepo.CreateAsync(product));
+            return (await productRepo.CreateAsync(product,managerId));
         }
 
         public async Task DeleteProductAsync(Guid id)

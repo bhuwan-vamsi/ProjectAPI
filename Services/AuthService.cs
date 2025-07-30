@@ -42,7 +42,7 @@ namespace APIPractice.Services
                         {
                             await userRepository.AddCustomer(registerCustomerRequest, identityUser);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             await userManager.DeleteAsync(identityUser);
                             throw new Exception("The phone number already exists");

@@ -8,7 +8,7 @@ namespace APIPractice.Repository.IRepository
     {
         Task <List<Product>> GetAllAsync (string? categoryName = null, string? filterQuery = null);
         Task<Product> GetAsync(Guid id);
-        Task<Product> CreateAsync(Product entity);
+        Task<Product> CreateAsync(Product entity, Guid managerId);
         Task UpdateAsync(Product existing, UpdateProductDto entity, Guid managerId);
         Task UpdateQuantityAsync(Guid id, Product product);
         Task DeleteAsync(Product entity);

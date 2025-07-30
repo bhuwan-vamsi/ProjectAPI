@@ -8,7 +8,7 @@ namespace APIPractice.Services.IService
     {
         public Task CheckOut(PurchaseOrderRequest orders, Guid userId);
 
-        public Task<List<OrderHistoryDto>> ViewHistory(ClaimsIdentity claimsIdentity);
+        public Task<List<OrderHistoryDto>> ViewHistory(Guid Id);
 
         public Task<OrderHistoryDto> ViewOrderById(Guid id, ClaimsIdentity claimsIdentity);
 

@@ -28,7 +28,11 @@ namespace APIPractice.Controllers
         {
             try
             {
-                ClaimsIdentity identity = (ClaimsIdentity)User.Identity;
+                var identity = User.Identity as ClaimsIdentity;
+                if (identity == null)
+                {
+                    return Unauthorized("User identity not found.");
+                }
                 CustomerDto customer = await customerService.ViewProfile(identity);
                 return Ok(customer);
             }
@@ -46,7 +50,11 @@ namespace APIPractice.Controllers
         {
             try
             {
-                var identity = (ClaimsIdentity)User.Identity;
+                var identity = User.Identity as ClaimsIdentity;
+                if(identity == null)
+                {
+                    return Unauthorized("User identity not found.");
+                }
                 await customerService.EditProfile(identity, request);
                 return Ok("Successfully Updated");
             }catch (Exception ex)
@@ -99,7 +107,6 @@ namespace APIPractice.Controllers
                         ImageUrl = ""
                     }
                 };
-
                 return Ok(categories);
             }
             catch (Exception ex)
