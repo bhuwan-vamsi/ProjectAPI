@@ -30,11 +30,11 @@ namespace APIPractice.Controller
         [HttpGet]
         [ValidateModel]
         [Authorize(Roles = "Customer,Manager")]
-        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
+        public async Task<IActionResult> GetAll([FromQuery] string? category, [FromQuery] string? filterQuery)
         {
             try
             {
-                var products = await productService.GetAllProductAsync(filterOn, filterQuery);
+                var products = await productService.GetAllProductAsync(category, filterQuery);
 
                 var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
