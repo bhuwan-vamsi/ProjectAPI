@@ -31,12 +31,16 @@ namespace APIPractice.Services
             this.orderStatusRepository = orderStatusRepository;
             this.productRepository = productRepository;
         }
-        public async Task CheckOut(PurchaseOrderRequest purchaseOrders, ClaimsIdentity identity)
+        public async Task CheckOut(PurchaseOrderRequest purchaseOrders, Guid userId)
         {
-            var userId = Guid.Parse(identity.FindFirst(ClaimTypes.NameIdentifier)?.Value); 
             Guid orderId = Guid.NewGuid();
             decimal orderAmount = 0;
             List<OrderItem> orderItemList = new List<OrderItem>();
+
+            if(purchaseOrders == null || purchaseOrders.Items.Count() == 0)
+            {
+                throw new Exception("No Order recieved");
+            }
 
             foreach (var purchaseOrder in purchaseOrders.Items)
             {
@@ -53,22 +57,20 @@ namespace APIPractice.Services
                     await productRepository.UpdateQuantityAsync(purchaseOrder.ProductId, product);
                     orderItem.Product = product;
                     orderItemList.Add(orderItem);
-                    orderAmount += (purchaseOrder.UnitPrice * purchaseOrder.Quantity);
-                    
-                }
-                        
+                    orderAmount += purchaseOrder.UnitPrice * purchaseOrder.Quantity;
+                }        
             }
 
-            var StatusId = await orderStatusRepository.GetIdOfStatus("billed");
+            var orderStatus = await orderStatusRepository.GetStatus("billed");
 
             var order = new Order
             {
                 Id = orderId,
                 CustomerId = userId,
                 Amount = orderAmount + 46,
-                OrderStatusId = StatusId,
-                OrderStatus = await orderStatusRepository.GetOrderStatusById(StatusId),
-                CreatedAt = DateTime.UtcNow,
+                OrderStatusId = orderStatus.Id,
+                OrderStatus = orderStatus,
+                CreatedAt = DateTime.Now,
                 DeliveredAt = null,
                 Customer = await customerRepository.GetById(userId),
                 OrderItems = new List<OrderItem>()
@@ -88,7 +90,7 @@ namespace APIPractice.Services
             {
                 history.Add(new OrderHistoryDto { Id = order.Id, Status = order.OrderStatus.Name, 
                     Name =order.Customer.Name, Mobile=order.Customer.Phone , Address = order.Customer.Address,CreatedAt=order.CreatedAt,
-                    DeliveredAt=order.DeliveredAt, Items = AddOrderItems(order), TotalItems = order.OrderItems.Count,
+                    DeliveredAt=order.DeliveredAt, Items = mapper.Map<List<OrderResponseDto>>(order.OrderItems.Where(u => u.OrderId == order.Id).Select(u => u.Product)), TotalItems = order.OrderItems.Count,
                     Billing = new BillingDto { ItemTotal = order.Amount - 46, DeliveryFee = 40, PlatformFee = 6
                     ,TotalBill=order.Amount}
                 });
@@ -112,7 +114,7 @@ namespace APIPractice.Services
                     Address = order.Customer.Address,
                     CreatedAt = order.CreatedAt,
                     DeliveredAt = order.DeliveredAt,
-                    Items = AddOrderItems(order),
+                    Items = mapper.Map<List<OrderResponseDto>>(order.OrderItems.Where(u => u.OrderId == order.Id).Select(u => u.Product)),
                     TotalItems = order.OrderItems.Count,
                     Billing = new BillingDto
                     {
@@ -142,23 +144,7 @@ namespace APIPractice.Services
             return mapper.Map<List<PurchaseOrderRequest>>(orders);
         }
 
-        // Helper Functions
-        private ICollection<OrderResponseDto> AddOrderItems(Order order)
-        {
-            List<OrderResponseDto> OrderItems = new List<OrderResponseDto>();
-            foreach (OrderItem item in order.OrderItems)
-            {
-                OrderItems.Add(new OrderResponseDto
-                {
-                    Name = item.Product.Name,
-                    ImageUrl = item.Product.ImageUrl,
-                    Quantity = item.Quantity,
-                    ProductId = item.ProductId,
-                    UnitPrice = item.Product.Price
-                });
-            }
-            return OrderItems;
-        }
+        
     }
 }
 
