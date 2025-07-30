@@ -120,7 +120,7 @@ namespace APIPractice
 
             var app = builder.Build();
 
-            //app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseMiddleware<BadRequestExceptionHandler>();
 
             //using (var scope = app.Services.CreateScope())
             //{

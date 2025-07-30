@@ -13,5 +13,7 @@ namespace APIPractice.Repository.IRepository
         Task UpdateQuantityAsync(Guid id, Product product);
         Task DeleteAsync(Product entity);
         Task<List<Category>> GetAllCategoriesAsync();
+        Task<List<Product>> GetAllByIdsAsync(List<Guid> productIds);
+        Task UpdateAllQuantityAsync(Dictionary<Guid, Product> productDict);
     }
 }
