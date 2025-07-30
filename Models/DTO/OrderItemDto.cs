@@ -7,8 +7,10 @@ namespace APIPractice.Models.DTO
         [Required]
         public Guid ProductId { get; set; }
         [Required]
-        public int? Quantity { get; set; }
+        [Range(1,int.MaxValue, ErrorMessage="Quantity cannot be 0")]
+        public int Quantity { get; set; }
         [Required]
-        public decimal? UnitPrice { get; set; }
+        [Range(1, 100000, ErrorMessage ="Unit Price cannot be 0")]
+        public decimal UnitPrice { get; set; }
     }
 }
