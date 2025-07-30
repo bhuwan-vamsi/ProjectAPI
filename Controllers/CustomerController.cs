@@ -68,7 +68,7 @@ namespace APIPractice.Controllers
         {
             try
             {
-                var categories = new List<CustomerCategoryDto>
+                var categories =  new List<CustomerCategoryDto>
                 {
                     new CustomerCategoryDto
                     {

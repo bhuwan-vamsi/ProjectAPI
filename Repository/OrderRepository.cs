@@ -110,6 +110,5 @@ namespace APIPractice.Repository
                 .Include(o => o.OrderItems)
                 .ToListAsync();
         }
-
     }
 }

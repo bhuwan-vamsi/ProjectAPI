@@ -22,11 +22,11 @@ namespace APIPractice.Controller
         [HttpGet]
         [ValidateModel]
         [Authorize(Roles = "Customer,Manager")]
-        public async Task<IActionResult> GetAll([FromQuery] string? category, [FromQuery] string? filterQuery)
+        public async Task<IActionResult> GetAll([FromQuery] string? category, [FromQuery] string? filterQuery, [FromQuery]string? sortBy,[FromQuery] bool IsAscending,[FromQuery] int PageNumber=1, [FromQuery] int PageSize = int.MaxValue)
         {
             try
             {
-                var products = await productService.GetAllProductAsync(category, filterQuery);
+                var products = await productService.GetAllProductAsync(category, filterQuery,sortBy, IsAscending, PageNumber, PageSize);
 
                 var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 

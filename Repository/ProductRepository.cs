@@ -21,7 +21,7 @@ namespace APIPractice.Repository
             _db = db;
             this.transactionManager = transactionManager;
         }
-        public async Task<List<Product>> GetAllAsync(string? category, string? filterQuery = null)
+        public async Task<List<Product>> GetAllAsync(string? category, string? filterQuery = null,string? sortBy=null, bool isAscending= true, int pageNumber=1, int pageSize= int.MaxValue)
         {
             var products = _db.Products.Include("Category").AsQueryable();
 
@@ -34,7 +34,27 @@ namespace APIPractice.Repository
             {
                 products = products.Where(x => x.Name.ToLower().Contains(filterQuery.ToLower()));
             }
-            return await products.ToListAsync();
+            if (!string.IsNullOrWhiteSpace(sortBy))
+            {
+                if (sortBy.Equals("UnitPrice", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = isAscending ? products.OrderBy(x => x.Price) : products.OrderByDescending(x => x.Price);
+                }
+                else if (sortBy.Equals("Name", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = isAscending ? products.OrderBy(x => x.Name) : products.OrderByDescending(x => x.Name);
+                }
+                else if (sortBy.Equals("Quantity", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = isAscending ? products.OrderBy(x => x.Quantity) : products.OrderByDescending(x => x.Quantity);
+                }
+                else if(sortBy.Equals("Threshold", StringComparison.OrdinalIgnoreCase))
+                {
+                    products = isAscending ? products.OrderBy(x => x.Threshold) : products.OrderByDescending(x => x.Units);
+                }
+            }
+            var skip = (pageNumber - 1) * pageSize;
+            return await products.Skip(skip).Take(pageSize).ToListAsync();
         }
 
         public async Task<Product> GetAsync(Guid id)
