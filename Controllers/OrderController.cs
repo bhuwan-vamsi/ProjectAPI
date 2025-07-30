@@ -27,8 +27,10 @@ namespace APIPractice.Controllers
         {
             try
             {
-                var claimsIdentity = (ClaimsIdentity)User.Identity;
-                await orderService.CheckOut(orders, claimsIdentity);
+                var userId = Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id)
+                    ? id : throw new UnauthorizedAccessException("Invalid or missing user ID.");
+
+                await orderService.CheckOut(orders, userId);
                 return Ok("Your Order was successfull");
             }catch (Exception ex)
             {

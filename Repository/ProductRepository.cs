@@ -21,21 +21,18 @@ namespace APIPractice.Repository
             _db = db;
             this.transactionManager = transactionManager;
         }
-        public async Task<List<Product>> GetAllAsync(string? filterOn, string? filterQuery = null)
+        public async Task<List<Product>> GetAllAsync(string? category, string? filterQuery = null)
         {
             var products = _db.Products.Include("Category").AsQueryable();
 
             // filtering
-            if (!string.IsNullOrWhiteSpace(filterOn))
+            if (!string.IsNullOrWhiteSpace(category))
             {
-                if (filterOn.Equals("Category", StringComparison.OrdinalIgnoreCase) && filterQuery!=null)
-                {
-                    products = products.Include("Category").Where(x => x.Category.Name.Equals(filterQuery));
-                }
-                if(filterOn.Equals("Name", StringComparison.OrdinalIgnoreCase) && filterQuery!=null)
-                {
-                    products = products.Include("Category").Where(x => x.Name.ToLower().Contains(filterQuery.ToLower()));
-                }
+                products = products.Where(x => x.Category.Name.Equals(category));
+            }
+            if(!string.IsNullOrWhiteSpace(filterQuery))
+            {
+                products = products.Where(x => x.Name.ToLower().Contains(filterQuery.ToLower()));
             }
             return await products.ToListAsync();
         }
@@ -69,7 +66,7 @@ namespace APIPractice.Repository
                         ProductId = existingProduct.Id,
                         ManagerId = managerId,
                         Quantity = updatedProduct.Quantity,
-                        TimeStamp = DateTime.UtcNow
+                        UpdatedAt = DateTime.Now
                     };
                     await _db.StockUpdateHistories.AddAsync(stockUpdate);
                     await _db.SaveChangesAsync();

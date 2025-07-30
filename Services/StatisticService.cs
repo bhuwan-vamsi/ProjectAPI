@@ -24,11 +24,11 @@ namespace APIPractice.Services
             int quantity = 0;
             foreach (Category category in categories)
             {
-                categoryDistribution.Categories.Add(new CategoriesList { Name = category.Name, Items = products.Where(u => u.Category == category).Count(), IsNew = false});
-                quantity += products.Where(p=> p.CategoryId == category.Id).Sum(p => p.Quantity);
+                categoryDistribution.Categories.Add(new CategoriesList { Name = category.Name, Items = category.Products.Count(), IsNew = false});
+                quantity += category.Products.Sum(q=>q.Quantity);
             }
             categoryDistribution.TotalQuantityInCategories = quantity;
-            categoryDistribution.LastUpdated = DateTime.UtcNow;
+            categoryDistribution.LastUpdated = DateTime.Now.ToString("dd-MM-yy hh:mm tt");
             return categoryDistribution;
         }
 
@@ -40,8 +40,9 @@ namespace APIPractice.Services
             invSummary.Instock = products.Count(p => p.Quantity > p.Threshold);
             invSummary.LowStock = products.Count(p => p.Quantity <= p.Threshold && p.Quantity>0);
             invSummary.OutOfStock = products.Count(p => p.Quantity == 0);
-            invSummary.LastUpdated = DateTime.UtcNow;
+            invSummary.LastUpdated = DateTime.Now.ToString("dd-MM-yy hh:mm tt");
             return invSummary;
         }
+
     }
 }

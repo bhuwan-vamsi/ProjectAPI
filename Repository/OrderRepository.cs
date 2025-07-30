@@ -1,4 +1,5 @@
 ﻿using APIPractice.Data;
+using APIPractice.Infrastructure;
 using APIPractice.Models.Domain;
 using APIPractice.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +9,12 @@ namespace APIPractice.Repository
     public class OrderRepository : IOrderRepository
     {
         private readonly ApplicationDbContext db;
+        private readonly TransactionManager transactionManager;
 
-        public OrderRepository(ApplicationDbContext db)
+        public OrderRepository(ApplicationDbContext db, TransactionManager transactionManager)
         {
             this.db = db;
+            this.transactionManager = transactionManager;
         }
 
         public async Task<Order> AddAsync(Order order)
@@ -23,18 +26,21 @@ namespace APIPractice.Repository
 
         public async Task DeleteOrderOfCustomer(Guid orderId)
         {
-            Order? order = await db.Orders.Include("OrderItems").Include("OrderStatus").FirstOrDefaultAsync(x => x.Id == orderId);
-            if (order == null)
+            await transactionManager.ExecuteInTransactionAsync(async () =>
             {
-                throw new Exception("Order not found");
-            }
-            db.Orders.RemoveRange(order);
-            
+                Order? order = await db.Orders.Include("OrderItems").Include("OrderStatus").FirstOrDefaultAsync(x => x.Id == orderId);
+                if (order == null)
+                {
+                    throw new Exception("Order not found");
+                }
+                db.Orders.RemoveRange(order);
 
-            List<OrderItem> items = await db.OrderItems.Where(x => x.OrderId == orderId).ToListAsync();
-            db.OrderItems.RemoveRange(items);
 
-            await db.SaveChangesAsync();
+                List<OrderItem> items = await db.OrderItems.Where(x => x.OrderId == orderId).ToListAsync();
+                db.OrderItems.RemoveRange(items);
+
+                await db.SaveChangesAsync();
+            });
         }
 
         public async Task<List<Order>> GetOrderHistoryOfCustomer(Guid customerId)
@@ -63,21 +69,24 @@ namespace APIPractice.Repository
 
         public async Task UpdateAsync(Guid id,Order order)
         {
-            Order? existingOrder = await db.Orders.FirstOrDefaultAsync(o=> o.Id == id);
-            if (existingOrder == null)
+            await transactionManager.ExecuteInTransactionAsync(async () =>
             {
-                throw new Exception("The order could not be updated");
-            }
-            existingOrder.CustomerId = order.CustomerId;
-            existingOrder.Customer = order.Customer;
-            existingOrder.Amount = order.Amount;
-            existingOrder.OrderStatus = order.OrderStatus;
-            existingOrder.OrderStatusId = order.OrderStatusId;
-            existingOrder.CreatedAt = order.CreatedAt;
-            existingOrder.OrderItems = order.OrderItems;
-            db.Orders.Update(existingOrder);
+                Order? existingOrder = await db.Orders.FirstOrDefaultAsync(o => o.Id == id);
+                if (existingOrder == null)
+                {
+                    throw new Exception("The order could not be updated");
+                }
+                existingOrder.CustomerId = order.CustomerId;
+                existingOrder.Customer = order.Customer;
+                existingOrder.Amount = order.Amount;
+                existingOrder.OrderStatus = order.OrderStatus;
+                existingOrder.OrderStatusId = order.OrderStatusId;
+                existingOrder.CreatedAt = order.CreatedAt;
+                existingOrder.OrderItems = order.OrderItems;
+                db.Orders.Update(existingOrder);
 
-            await db.SaveChangesAsync();
+                await db.SaveChangesAsync();
+            });
         }
 
         public async Task<List<Order>> GetOrdersByStatusAsync(string status)

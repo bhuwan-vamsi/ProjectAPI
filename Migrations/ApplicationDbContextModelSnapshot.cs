@@ -228,6 +228,11 @@ namespace APIPractice.Migrations
                         {
                             Id = new Guid("ac5e5767-dd5d-4c46-bdea-947155ddeda4"),
                             Name = "Packed"
+                        },
+                        new
+                        {
+                            Id = new Guid("4ba5ec5f-543f-47a9-bfe4-c9ea5e2b7ef5"),
+                            Name = "Delivered"
                         });
                 });
 
@@ -285,8 +290,8 @@ namespace APIPractice.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("datetime2");
+                    b.Property<string>("UpdatedAt")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
