@@ -1,4 +1,5 @@
 ﻿using APIPractice.Enums;
+using APIPractice.Exceptions;
 using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
 using APIPractice.Repository;
@@ -42,7 +43,7 @@ namespace APIPractice.Services
 
             if (purchaseOrders == null || purchaseOrders.Items.Count() == 0)
             {
-                throw new Exception("No Order recieved");
+                throw new BadRequestException("No Order recieved");
             }
 
             foreach (var purchaseOrder in purchaseOrders.Items)
@@ -52,12 +53,12 @@ namespace APIPractice.Services
 
                 if (!productDict.TryGetValue(purchaseOrder.ProductId, out var product))
                 {
-                    throw new Exception($"Product with ID {purchaseOrder.ProductId} not found.");
+                    throw new NotFoundException($"Product with ID {purchaseOrder.ProductId} not found.");
                 }
 
                 if (product.Quantity < purchaseOrder.Quantity)
                 {
-                    throw new Exception("The Order is out of stock");
+                    throw new ConflictException("The Order is out of stock");
                 }
                 else
                 {
