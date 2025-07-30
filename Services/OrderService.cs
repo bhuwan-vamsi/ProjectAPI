@@ -36,8 +36,11 @@ namespace APIPractice.Services
             Guid orderId = Guid.NewGuid();
             decimal orderAmount = 0;
             List<OrderItem> orderItemList = new List<OrderItem>();
+            List<Guid> productIdList = purchaseOrders.Items.Select(p=> p.ProductId).ToList();
+            List<Product> productList = await productRepository.GetAllByIdsAsync(productIdList);
+            var productDict = productList.ToDictionary(p => p.Id);
 
-            if(purchaseOrders == null || purchaseOrders.Items.Count() == 0)
+            if (purchaseOrders == null || purchaseOrders.Items.Count() == 0)
             {
                 throw new Exception("No Order recieved");
             }
@@ -46,20 +49,25 @@ namespace APIPractice.Services
             {
                 var orderItem = mapper.Map<OrderItem>(purchaseOrder);
                 orderItem.OrderId = orderId;
-                Product product= await productRepository.GetAsync(purchaseOrder.ProductId);
-                if(product.Quantity < purchaseOrder.Quantity)
+
+                if (!productDict.TryGetValue(purchaseOrder.ProductId, out var product))
+                {
+                    throw new Exception($"Product with ID {purchaseOrder.ProductId} not found.");
+                }
+
+                if (product.Quantity < purchaseOrder.Quantity)
                 {
                     throw new Exception("The Order is out of stock");
                 }
                 else
                 {
                     product.Quantity = product.Quantity - purchaseOrder.Quantity;
-                    await productRepository.UpdateQuantityAsync(purchaseOrder.ProductId, product);
                     orderItem.Product = product;
                     orderItemList.Add(orderItem);
                     orderAmount += purchaseOrder.UnitPrice * purchaseOrder.Quantity;
                 }        
             }
+            await productRepository.UpdateAllQuantityAsync(productDict);
 
             var orderStatus = await orderStatusRepository.GetStatus("billed");
 
@@ -73,12 +81,9 @@ namespace APIPractice.Services
                 CreatedAt = DateTime.Now,
                 DeliveredAt = null,
                 Customer = await customerRepository.GetById(userId),
-                OrderItems = new List<OrderItem>()
+                OrderItems = orderItemList
             };
             await orderRepository.AddAsync(order);
-            await orderItemRepository.AddRangeAsync(orderItemList);
-            order.OrderItems = orderItemList;
-            await orderRepository.UpdateAsync(orderId,order);
         }
 
         public async Task<List<OrderHistoryDto>> ViewHistory(Guid userId)

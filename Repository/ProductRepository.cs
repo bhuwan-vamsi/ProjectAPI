@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 
 namespace APIPractice.Repository
 {
@@ -130,6 +131,17 @@ namespace APIPractice.Repository
         public async Task<List<Category>> GetAllCategoriesAsync()
         {
             return await _db.Categories.ToListAsync();
+        }
+
+        public async Task<List<Product>> GetAllByIdsAsync(List<Guid> productIds)
+        {
+            return await _db.Products.Where(p => productIds.Contains(p.Id)).ToListAsync();
+        }
+
+        public async Task UpdateAllQuantityAsync(Dictionary<Guid, Product> productDict)
+        {
+            _db.Products.UpdateRange(productDict.Values);
+            await _db.SaveChangesAsync();
         }
     }
 }
