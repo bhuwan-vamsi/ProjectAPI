@@ -74,9 +74,9 @@ namespace APIPractice.Controller
         public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
             try
-            { 
-                var product = await productService.GetProductAsync(id);
+            {
                 var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+                var product = await productService.GetProductAsync(id, role);
                 if (role == "Customer")
                 {
                     var productCustomerDto = new ProductCustomerDto
@@ -90,7 +90,7 @@ namespace APIPractice.Controller
                     };
                     return Ok(productCustomerDto);
                 }
-                if(role== "Manager")
+                else if(role== "Manager")
                 {
                     return Ok(product);
                 }
@@ -143,7 +143,8 @@ namespace APIPractice.Controller
             try
             {
                 await productService.DeleteProductAsync(id);
-                return Ok();
+
+                return Ok("Toggled Successfully!");
             }
             catch (KeyNotFoundException ex)
             {

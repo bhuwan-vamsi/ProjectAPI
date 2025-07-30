@@ -39,9 +39,12 @@ namespace APIPractice.Services
             return mapper.Map<List<ProductDto>>(products);
             
         }
-        public async Task<ProductDto> GetProductAsync(Guid id)
+        public async Task<ProductDto> GetProductAsync(Guid id, string role)
         {
             var product = await productRepo.GetAsync(id);
+            if(role == "Customer" && product.IsActive == false)
+            {
+                throw new KeyNotFoundException("Product Not Found");            }
             return mapper.Map<ProductDto>(product);
         }
 
