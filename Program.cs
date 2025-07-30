@@ -1,5 +1,6 @@
 using APIPractice.Data;
 using APIPractice.ExcpetionHandling;
+using APIPractice.Infrastructure;
 using APIPractice.Mappings;
 using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
@@ -49,6 +50,7 @@ namespace APIPractice
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<TransactionManager>();
             //// Hide the below line once after running whole app
             //builder.Services.AddScoped<ProductCsvImporter>();
             builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();

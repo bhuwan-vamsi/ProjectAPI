@@ -1,4 +1,5 @@
 ﻿using APIPractice.Data;
+using APIPractice.Infrastructure;
 using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
 using APIPractice.Repository.IRepository;
@@ -13,9 +14,12 @@ namespace APIPractice.Repository
     public class ProductRepository : IProductRepository<Product>
     {
         private readonly ApplicationDbContext _db;
-        public ProductRepository(ApplicationDbContext db) 
+        private readonly TransactionManager transactionManager;
+
+        public ProductRepository(ApplicationDbContext db, TransactionManager transactionManager) 
         {
             _db = db;
+            this.transactionManager = transactionManager;
         }
         public async Task<List<Product>> GetAllAsync(string? filterOn, string? filterQuery = null)
         {
@@ -38,7 +42,7 @@ namespace APIPractice.Repository
 
         public async Task<Product> GetAsync(Guid id)
         {
-            var product= await _db.Products.Include("Category").FirstOrDefaultAsync(u=> u.Id == id && u.IsActive==true);
+            var product= await _db.Products.Include("Category").FirstOrDefaultAsync(u=> u.Id == id);
             if (product == null)
             {
                 throw new KeyNotFoundException("Product Not Found");
@@ -55,8 +59,7 @@ namespace APIPractice.Repository
         }
         public async Task UpdateAsync(Product existingProduct, UpdateProductDto updatedProduct, Guid managerId)
         {
-            using var transaction = await _db.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
-            try
+            await transactionManager.ExecuteInTransactionAsync(async () =>
             {
                 if (existingProduct.Quantity != updatedProduct.Quantity && existingProduct.Quantity < updatedProduct.Quantity)
                 {
@@ -82,34 +85,40 @@ namespace APIPractice.Repository
                 existingProduct.Threshold = updatedProduct.Threshold;
                 existingProduct.ImageUrl = updatedProduct.ImageUrl;
                 existingProduct.CategoryId = updatedProduct.CategoryId;
-                _db.Products.Update(existingProduct);
-                await _db.SaveChangesAsync();
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-            
+            });
         }
         public async Task UpdateQuantityAsync(Guid id, Product product)
         {
-            var existingProduct = _db.Products.Include("Category").FirstOrDefault(p => p.Id == id);
-            if(existingProduct == null)
+            await transactionManager.ExecuteInTransactionAsync(async () =>
             {
-                throw new KeyNotFoundException("Product Not Found");
-            }
-            existingProduct.Quantity = product.Quantity;
-            _db.Products.Update(existingProduct);
-            await _db.SaveChangesAsync();
+                if (product.Quantity < 0)
+                {
+                    throw new InvalidOperationException("Quantity cannot be negative.");
+                }
+
+                var existingProduct = _db.Products.Include("Category").FirstOrDefault(p => p.Id == id);
+                if (existingProduct == null)
+                {
+                    throw new KeyNotFoundException("Product Not Found");
+                }
+                existingProduct.Quantity = product.Quantity;
+                _db.Products.Update(existingProduct);
+                await _db.SaveChangesAsync();
+            });
         }
 
         public async Task DeleteAsync(Product product)
         {
-            product.IsActive = !product.IsActive;
-            _db.Products.Update(product);
-            await _db.SaveChangesAsync();
+            await transactionManager.ExecuteInTransactionAsync(async () =>
+            {
+                if (product == null)
+                {
+                    throw new KeyNotFoundException("Product Not Found");
+                }
+                product.IsActive = !product.IsActive;
+                _db.Products.Update(product);
+                await _db.SaveChangesAsync();
+            });
         }
         public async Task<List<Category>> GetAllCategoriesAsync()
         {

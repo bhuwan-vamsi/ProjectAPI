@@ -7,7 +7,7 @@ namespace APIPractice.Services.IService
     public interface IProductService
     {
         Task<List<ProductDto>> GetAllProductAsync(string? categoryName, string? filterQuery);
-        Task<ProductDto> GetProductAsync(Guid id);
+        Task<ProductDto> GetProductAsync(Guid id, string role);
         Task<Product> CreateProductAsync(CreateProductDto product);
         Task UpdateProductAsync(Guid id, UpdateProductDto product, Guid managerId);
         Task DeleteProductAsync(Guid id);
