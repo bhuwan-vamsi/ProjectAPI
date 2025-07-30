@@ -38,7 +38,15 @@ namespace APIPractice.Services
                     identityResult = await userManager.AddToRoleAsync(identityUser, registerCustomerRequest.Role);
                     if (identityResult.Succeeded)
                     {
-                        await userRepository.AddCustomer(registerCustomerRequest, identityUser);
+                        try
+                        {
+                            await userRepository.AddCustomer(registerCustomerRequest, identityUser);
+                        }
+                        catch (Exception e)
+                        {
+                            await userManager.DeleteAsync(identityUser);
+                            throw new Exception("The phone number already exists");
+                        }
                     }
                     else
                     {
@@ -47,6 +55,7 @@ namespace APIPractice.Services
                 }
                 else
                 {
+                    await userManager.DeleteAsync(identityUser);
                     throw new Exception("Role not specified");
                 }
             }

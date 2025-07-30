@@ -38,6 +38,11 @@ namespace APIPractice.Services
             decimal orderAmount = 0;
             List<OrderItem> orderItemList = new List<OrderItem>();
 
+            if(purchaseOrders == null || purchaseOrders.Items.Count() == 0)
+            {
+                throw new Exception("No Order recieved");
+            }
+
             foreach (var purchaseOrder in purchaseOrders.Items)
             {
                 var orderItem = mapper.Map<OrderItem>(purchaseOrder);
@@ -49,11 +54,11 @@ namespace APIPractice.Services
                 }
                 else
                 {
-                    product.Quantity = product.Quantity - purchaseOrder.Quantity;
+                    product.Quantity = (int)(product.Quantity - purchaseOrder.Quantity);
                     await productRepository.UpdateQuantityAsync(purchaseOrder.ProductId, product);
                     orderItem.Product = product;
                     orderItemList.Add(orderItem);
-                    orderAmount += (purchaseOrder.UnitPrice * purchaseOrder.Quantity);
+                    orderAmount += (decimal)(purchaseOrder.UnitPrice * purchaseOrder.Quantity);
                     
                 }
                         

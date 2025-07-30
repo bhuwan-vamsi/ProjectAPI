@@ -1,11 +1,14 @@
-﻿namespace APIPractice.Models.DTO
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace APIPractice.Models.DTO
 {
     public class OrderItemDto
     {
+        [Required]
         public Guid ProductId { get; set; }
-
-        public int Quantity { get; set; }
-
-        public decimal UnitPrice { get; set; }
+        [Required]
+        public int? Quantity { get; set; }
+        [Required]
+        public decimal? UnitPrice { get; set; }
     }
 }

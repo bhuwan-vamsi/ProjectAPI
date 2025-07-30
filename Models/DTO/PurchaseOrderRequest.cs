@@ -1,9 +1,11 @@
 ﻿using APIPractice.Models.Domain;
+using System.ComponentModel.DataAnnotations;
 
 namespace APIPractice.Models.DTO
 {
     public class PurchaseOrderRequest
     {
-        public IEnumerable<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();
+        [Required]
+        public required IEnumerable<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();
     }
 }
