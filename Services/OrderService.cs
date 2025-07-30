@@ -53,7 +53,8 @@ namespace APIPractice.Services
                     await productRepository.UpdateQuantityAsync(purchaseOrder.ProductId, product);
                     orderItem.Product = product;
                     orderItemList.Add(orderItem);
-                    orderAmount += (purchaseOrder.UnitPrice * purchaseOrder.Quantity) + 46;
+                    orderAmount += (purchaseOrder.UnitPrice * purchaseOrder.Quantity);
+                    
                 }
                         
             }
@@ -64,7 +65,7 @@ namespace APIPractice.Services
             {
                 Id = orderId,
                 CustomerId = userId,
-                Amount = orderAmount,
+                Amount = orderAmount + 46,
                 OrderStatusId = StatusId,
                 OrderStatus = await orderStatusRepository.GetOrderStatusById(StatusId),
                 CreatedAt = DateTime.UtcNow,
