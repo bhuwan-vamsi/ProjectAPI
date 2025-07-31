@@ -46,10 +46,10 @@ namespace APIPractice.Repository
         public async Task<List<Order>> GetOrderHistoryOfCustomer(Guid customerId)
         {
             List<Order> orders = await db.Orders.Include("OrderItems").Include("OrderStatus").Include("OrderItems.Product").
-                Include("OrderItems.Product.Category").Include("Customer").Where(x=>x.CustomerId == customerId)
+                Include("OrderItems.Product.Category").Include("Customer").Where(x => x.CustomerId == customerId)
                 .OrderBy(u => u.CreatedAt).ToListAsync();
 
-            
+
             return orders;
         }
 
@@ -62,7 +62,7 @@ namespace APIPractice.Repository
             return order;
         }
 
-        public async Task UpdateAsync(Guid id,Order order)
+        public async Task UpdateAsync(Guid id, Order order)
         {
             await transactionManager.ExecuteInTransactionAsync(async () =>
             {
@@ -104,6 +104,25 @@ namespace APIPractice.Repository
                 .Where(o => orderIds.Contains(o.Id))
                 .Include(o => o.OrderItems)
                 .ToListAsync();
+        }
+
+        public async Task<List<Order>> GetAllOrderList()
+        {
+            var orders = await db.Orders.ToListAsync();
+            return orders;
+        }
+        public async Task<Dictionary<string, decimal>> GetTotalSalesByMonth()
+        {
+            var salesData = await db.Orders
+                .Where(o => o.DeliveredAt != null)
+                .GroupBy(o => new { o.CreatedAt.Year, o.CreatedAt.Month })
+                .Select(g => new
+                {
+                    Month = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MMMM yyyy"),
+                    TotalSales = g.Sum(o => o.Amount)
+                })
+                .ToListAsync();
+            return salesData.ToDictionary(x => x.Month, x => x.TotalSales);
         }
     }
 }

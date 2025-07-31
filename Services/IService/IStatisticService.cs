@@ -9,5 +9,6 @@ namespace APIPractice.Services.IService
         Task<CategoryDistributionDto> CategoryDistribution();
         Task<ProductDto> MostSoldProducts();
         Task<Dictionary<string,ProductAnalysisDto>> ProductPriceAnalysis(Guid id);
+        Task<RevenueAnalysisDto> RevenueAnalysis();
     }
 }

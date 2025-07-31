@@ -80,6 +80,19 @@ namespace APIPractice.Controllers
                 return BadRequest("An error occurred while fetching the product price analysis.");
             }
         }
-
+        [HttpGet]
+        [Route("RevenueAnalysis")]
+        public async Task<IActionResult> GetRevenueAnalysis()
+        {
+            try
+            {
+                var revenueAnalysis = await statisticService.RevenueAnalysis();
+                return Ok(revenueAnalysis);
+            }
+            catch (Exception)
+            {
+                return BadRequest("An error occurred while fetching the revenue analysis");
+            }
+        }
     }
 }

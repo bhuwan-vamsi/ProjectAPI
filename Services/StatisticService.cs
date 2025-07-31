@@ -12,13 +12,15 @@ namespace APIPractice.Services
         private readonly IProductRepository<Product> productRepository;
         private readonly IOrderItemRepository orderItemRepository;
         private readonly IStockRepository stockRepository;
+        private readonly IOrderRepository orderRepository;
         private readonly IMapper mapper;
 
-        public StatisticService(IProductRepository<Product> productRepository, IOrderItemRepository orderItemRepository, IStockRepository stockRepository, IMapper mapper)
+        public StatisticService(IProductRepository<Product> productRepository, IOrderItemRepository orderItemRepository, IStockRepository stockRepository, IOrderRepository orderRepository, IMapper mapper)
         {
             this.productRepository = productRepository;
             this.orderItemRepository = orderItemRepository;
             this.stockRepository = stockRepository;
+            this.orderRepository = orderRepository;
             this.mapper = mapper;
         }
         public async Task<CategoryDistributionDto> CategoryDistribution()
@@ -105,6 +107,23 @@ namespace APIPractice.Services
                 }
             }
             return productAnalysisList;
+        }
+
+        public async Task<RevenueAnalysisDto> RevenueAnalysis()
+        {
+            var orders = await orderRepository.GetAllOrderList();
+            var deliveredOrders = orders.Where(u => u.DeliveredAt != null);
+            var revenueAnalysis = new RevenueAnalysisDto
+            {
+                TotalSales = deliveredOrders.Sum(o => o.Amount),
+                AvgOrderValue = deliveredOrders.Sum(o=> o.Amount) / deliveredOrders.Count(),
+                ActiveCustomers = orders.Select(o => o.CustomerId).Distinct().Count(),
+                TotalOrders = orders.Count(),
+                PendingOrders = orders.Where(o => o.DeliveredAt == null).Count(),
+                CompletedOrders = deliveredOrders.Count()
+            };
+            revenueAnalysis.YearlyRevenue = await orderRepository.GetTotalSalesByMonth();
+            return revenueAnalysis;
         }
     }
 }

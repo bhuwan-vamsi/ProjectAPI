@@ -47,6 +47,7 @@ namespace APIPractice
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IRegisterUserRepository, RegisterUserRepository>();
             builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            builder.Services.AddScoped<IStockRepository, StockRepository>();
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -118,10 +119,10 @@ namespace APIPractice
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 });
 
-            builder.WebHost.ConfigureKestrel(serverOptions =>
-            {
-                serverOptions.ListenAnyIP(5000);
-            });
+            //builder.WebHost.ConfigureKestrel(serverOptions =>
+            //{
+            //    serverOptions.ListenAnyIP(5000);
+            //});
 
             var app = builder.Build();
 
@@ -143,11 +144,11 @@ namespace APIPractice
                 app.UseSwaggerUI();
             }
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
-            //app.UseAuthentication();
+            app.UseAuthentication();
 
-            //app.UseAuthorization();
+            app.UseAuthorization();
 
             app.Use(async (context, next) =>
             {

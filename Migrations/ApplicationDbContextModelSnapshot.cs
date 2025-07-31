@@ -371,7 +371,7 @@ namespace APIPractice.Migrations
 
             modelBuilder.Entity("APIPractice.Models.Domain.OrderItem", b =>
                 {
-                    b.HasOne("APIPractice.Models.Domain.Order", null)
+                    b.HasOne("APIPractice.Models.Domain.Order", "Orders")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -382,6 +382,8 @@ namespace APIPractice.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Orders");
 
                     b.Navigation("Product");
                 });

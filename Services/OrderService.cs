@@ -58,7 +58,6 @@ namespace APIPractice.Services
                     ItemStatus.Add(new ItemResponseDto { status = "failed", error = "Product was Not found", 
                     productId=purchaseOrder.ProductId});
                 }
-
                 if (product.Quantity < purchaseOrder.Quantity)
                 {
                     ItemStatus.Add(new ItemResponseDto
