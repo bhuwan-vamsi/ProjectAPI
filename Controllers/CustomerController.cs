@@ -39,7 +39,7 @@ namespace APIPractice.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
 
@@ -60,7 +60,7 @@ namespace APIPractice.Controllers
                 return NoContent();
             }catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
 
@@ -112,7 +112,7 @@ namespace APIPractice.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
     }

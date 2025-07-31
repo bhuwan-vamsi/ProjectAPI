@@ -37,7 +37,7 @@ namespace APIPractice.Controllers
                 return Ok(OkResponse<List<ItemResponseDto>>.Success(statusList));
             }catch (BadRequestException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
 
         }
@@ -59,7 +59,7 @@ namespace APIPractice.Controllers
                     : Ok(OkResponse<List<OrderHistoryDto>>.Empty());
             }catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
 
@@ -80,7 +80,7 @@ namespace APIPractice.Controllers
                     : Ok(OkResponse<OrderHistoryDto>.Empty());
             }catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
 

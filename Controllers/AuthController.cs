@@ -35,7 +35,7 @@ namespace APIPractice.Controller
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
 
@@ -50,7 +50,7 @@ namespace APIPractice.Controller
                 return Created();
             }catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
     }
