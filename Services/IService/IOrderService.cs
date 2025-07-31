@@ -6,7 +6,7 @@ namespace APIPractice.Services.IService
 {
     public interface IOrderService
     {
-        public Task CheckOut(PurchaseOrderRequest orders, Guid userId);
+        public Task<List<ItemResponseDto>> CheckOut(PurchaseOrderRequest orders, Guid userId);
 
         public Task<List<OrderHistoryDto>> ViewHistory(Guid Id);
 
