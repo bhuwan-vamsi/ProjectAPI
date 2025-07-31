@@ -62,5 +62,24 @@ namespace APIPractice.Controllers
                 return BadRequest("An error occurred while fetching the fast moving product.");
             }
         }
+        [HttpGet]
+        [Route("ProductPriceAnalysis/{id}")]
+        public async Task<IActionResult> GetProductPriceAnalysis([FromRoute] Guid id)
+        {
+            try
+            {
+                var priceAnalysis = await statisticService.ProductPriceAnalysis(id);
+                return Ok(priceAnalysis);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound("Product not found.");
+            }
+            catch (Exception)
+            {
+                return BadRequest("An error occurred while fetching the product price analysis.");
+            }
+        }
+
     }
 }
