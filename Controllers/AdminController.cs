@@ -40,7 +40,7 @@ namespace APIPractice.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
 
@@ -58,7 +58,7 @@ namespace APIPractice.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
         [HttpPost]
@@ -74,7 +74,7 @@ namespace APIPractice.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
     }
