@@ -48,22 +48,15 @@ namespace APIPractice.Repository
             List<Order> orders = await db.Orders.Include("OrderItems").Include("OrderStatus").Include("OrderItems.Product").
                 Include("OrderItems.Product.Category").Include("Customer").Where(x=>x.CustomerId == customerId).ToListAsync();
 
-            if(orders == null || orders.Count == 0)
-            {
-                throw new Exception("No History Found");
-            }
+            
             return orders;
         }
 
-        public async Task<Order> GetOrderByIdAsync(Guid orderId, Guid customerId)
+        public async Task<Order?> GetOrderByIdAsync(Guid orderId, Guid customerId)
         {
             Order? order = await db.Orders.Include("OrderItems").Include("OrderStatus").Include("OrderItems.Product").
                 Include("OrderItems.Product.Category").Include("Customer").FirstOrDefaultAsync(x => x.CustomerId == customerId && x.Id == orderId);
 
-            if(order == null)
-            {
-                throw new Exception("No Order Found");
-            }
             return order;
         }
 

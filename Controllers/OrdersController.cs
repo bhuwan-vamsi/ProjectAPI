@@ -1,10 +1,13 @@
 ﻿using APIPractice.CustomAcitonFilters;
+using APIPractice.Exceptions;
 using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
+using APIPractice.Models.Responses;
 using APIPractice.Services.IService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 
 namespace APIPractice.Controllers
@@ -30,8 +33,8 @@ namespace APIPractice.Controllers
                     ? id : throw new UnauthorizedAccessException("Invalid or missing user ID.");
 
                 await orderService.CheckOut(orders, userId);
-                return Ok("Your Order was successfull");
-            }catch (Exception ex)
+                return Created();
+            }catch (BadRequestException ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -48,8 +51,11 @@ namespace APIPractice.Controllers
             {
                 var userId = Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id)
                     ? id : throw new UnauthorizedAccessException("Invalid or missing user ID.");
+
                 List<OrderHistoryDto> history = await orderService.ViewHistory(userId);
-                return Ok(history);
+
+                return (history.Count>0) ? Ok(OkResponse<List<OrderHistoryDto>>.Success(history)) 
+                    : Ok(OkResponse<List<OrderHistoryDto>>.Empty());
             }catch(Exception ex)
             {
                 return BadRequest(ex.Message);
@@ -64,9 +70,13 @@ namespace APIPractice.Controllers
         {
             try
             {
-                var identityUser = (ClaimsIdentity)User.Identity;
-                OrderHistoryDto order = await orderService.ViewOrderById(id,identityUser);
-                return Ok(order);
+                var userId = Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var tempid)
+                    ? tempid : throw new UnauthorizedAccessException("Invalid or missing user ID.");
+
+                OrderHistoryDto? history = await orderService.ViewOrderById(id,userId);
+
+                return (history != null) ? Ok(OkResponse<OrderHistoryDto>.Success(history))
+                    : Ok(OkResponse<OrderHistoryDto>.Empty());
             }catch(Exception ex)
             {
                 return BadRequest(ex.Message);

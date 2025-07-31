@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using APIPractice.Models.Responses;
 
 namespace APIPractice.Controllers
 {
@@ -33,8 +34,8 @@ namespace APIPractice.Controllers
                 {
                     return Unauthorized("User identity not found.");
                 }
-                CustomerDto customer = await customerService.ViewProfile(identity);
-                return Ok(customer);
+                CustomerDto? customer = await customerService.ViewProfile(identity);
+                return Ok(OkResponse<CustomerDto>.Success(customer));
             }
             catch (Exception ex)
             {
@@ -56,7 +57,7 @@ namespace APIPractice.Controllers
                     return Unauthorized("User identity not found.");
                 }
                 await customerService.EditProfile(identity, request);
-                return Ok("Successfully Updated");
+                return NoContent();
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);

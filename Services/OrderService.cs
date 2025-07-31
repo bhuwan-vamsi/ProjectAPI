@@ -8,6 +8,7 @@ using APIPractice.Services.IService;
 using AutoMapper;
 using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
+using System.Security.Cryptography;
 
 namespace APIPractice.Services
 {
@@ -91,6 +92,10 @@ namespace APIPractice.Services
         {
             List<Order> orders = await orderRepository.GetOrderHistoryOfCustomer(userId);
             List<OrderHistoryDto> history = new List<OrderHistoryDto>();
+            if (orders.Count == 0)
+            {
+                return history;
+            }
             foreach (Order order in orders)
             {
                 history.Add(new OrderHistoryDto { Id = order.Id, Status = order.OrderStatus.Name, 
@@ -104,12 +109,15 @@ namespace APIPractice.Services
 
         }
 
-        public async Task<OrderHistoryDto> ViewOrderById(Guid orderId, ClaimsIdentity identity)
+        public async Task<OrderHistoryDto?> ViewOrderById(Guid orderId, Guid userId)
         {
             try
             {
-                Guid userId = Guid.Parse(identity.FindFirst(ClaimTypes.NameIdentifier).Value);
                 var order = await orderRepository.GetOrderByIdAsync(orderId, userId);
+                if (order == null)
+                {
+                    return null;
+                }
                 OrderHistoryDto history = new OrderHistoryDto
                 {
                     Id = order.Id,
