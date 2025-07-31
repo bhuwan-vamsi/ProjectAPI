@@ -32,8 +32,9 @@ namespace APIPractice.Controllers
                 var userId = Guid.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id)
                     ? id : throw new UnauthorizedAccessException("Invalid or missing user ID.");
 
-                await orderService.CheckOut(orders, userId);
-                return Created();
+                List<ItemResponseDto> statusList = await orderService.CheckOut(orders, userId);
+                
+                return Ok(OkResponse<List<ItemResponseDto>>.Success(statusList));
             }catch (BadRequestException ex)
             {
                 return BadRequest(ex.Message);

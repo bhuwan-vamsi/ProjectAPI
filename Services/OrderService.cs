@@ -33,13 +33,14 @@ namespace APIPractice.Services
             this.orderStatusRepository = orderStatusRepository;
             this.productRepository = productRepository;
         }
-        public async Task CheckOut(PurchaseOrderRequest purchaseOrders, Guid userId)
+        public async Task<List<ItemResponseDto>> CheckOut(PurchaseOrderRequest purchaseOrders, Guid userId)
         {
             Guid orderId = Guid.NewGuid();
             decimal orderAmount = 0;
             List<OrderItem> orderItemList = new List<OrderItem>();
             List<Guid> productIdList = purchaseOrders.Items.Select(p=> p.ProductId).ToList();
             List<Product> productList = await productRepository.GetAllByIdsAsync(productIdList);
+            List<ItemResponseDto> ItemStatus = new List<ItemResponseDto>();   
             var productDict = productList.ToDictionary(p => p.Id);
 
             if (purchaseOrders == null || purchaseOrders.Items.Count() == 0)
@@ -54,12 +55,18 @@ namespace APIPractice.Services
 
                 if (!productDict.TryGetValue(purchaseOrder.ProductId, out var product))
                 {
-                    throw new NotFoundException($"Product with ID {purchaseOrder.ProductId} not found.");
+                    ItemStatus.Add(new ItemResponseDto { status = "failed", error = "Product was Not found", 
+                    productId=purchaseOrder.ProductId});
                 }
 
                 if (product.Quantity < purchaseOrder.Quantity)
                 {
-                    throw new ConflictException("The Order is out of stock");
+                    ItemStatus.Add(new ItemResponseDto
+                    {
+                        status = "failed",
+                        error = "The Order is out of stock",
+                        productId = purchaseOrder.ProductId
+                    });
                 }
                 else
                 {
@@ -67,6 +74,12 @@ namespace APIPractice.Services
                     orderItem.Product = product;
                     orderItemList.Add(orderItem);
                     orderAmount += purchaseOrder.UnitPrice * purchaseOrder.Quantity;
+
+                    ItemStatus.Add(new ItemResponseDto
+                    {
+                        status = "success",
+                        productId = purchaseOrder.ProductId
+                    });
                 }        
             }
             await productRepository.UpdateAllQuantityAsync(productDict);
@@ -86,6 +99,7 @@ namespace APIPractice.Services
                 OrderItems = orderItemList
             };
             await orderRepository.AddAsync(order);
+            return ItemStatus;
         }
 
         public async Task<List<OrderHistoryDto>> ViewHistory(Guid userId)

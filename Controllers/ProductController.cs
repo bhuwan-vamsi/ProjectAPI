@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNet.Identity;
+using APIPractice.Models.Responses;
 
 namespace APIPractice.Controller
 {
@@ -80,11 +81,11 @@ namespace APIPractice.Controller
                         ImageUrl = product.ImageUrl,
                         Category = product.Category
                     };
-                    return Ok(productCustomerDto);
+                    return Ok(OkResponse<ProductCustomerDto>.Success(productCustomerDto));
                 }
                 else if(role== "Manager")
                 {
-                    return Ok(product);
+                    return Ok(OkResponse<ProductDto>.Success(product));
                 }
                 return Forbid();
             }
@@ -119,7 +120,7 @@ namespace APIPractice.Controller
                     return BadRequest("Invalid Token");
                 }
                 await productService.UpdateProductAsync(id, entity, Guid.Parse(managerId));
-                return Ok("Updated Successfully");
+                return Ok(OkResponse<string>.Success("Updated Successfully"));
             }
             catch (KeyNotFoundException ex)
             {
@@ -137,7 +138,7 @@ namespace APIPractice.Controller
             {
                 await productService.DeleteProductAsync(id);
 
-                return Ok("Toggled Successfully!");
+                return Ok(OkResponse<string>.Success("Toggled Successfully!"));
             }
             catch (KeyNotFoundException ex)
             {
