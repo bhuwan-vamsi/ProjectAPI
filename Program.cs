@@ -118,6 +118,11 @@ namespace APIPractice
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 });
 
+            builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                serverOptions.ListenAnyIP(5000);
+            });
+
             var app = builder.Build();
 
             app.UseMiddleware<BadRequestExceptionHandler>();
@@ -138,11 +143,17 @@ namespace APIPractice
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
-            app.UseAuthentication();
+            //app.UseAuthentication();
 
-            app.UseAuthorization();
+            //app.UseAuthorization();
+
+            app.Use(async (context, next) =>
+            {
+                Console.WriteLine($"Incoming request from {context.Connection.RemoteIpAddress}");
+                await next();
+            });
 
             app.MapControllers();
 
