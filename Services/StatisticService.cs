@@ -26,7 +26,7 @@ namespace APIPractice.Services
         public async Task<CategoryDistributionDto> CategoryDistribution()
         {
             var categories = await productRepository.GetAllCategoriesAsync();
-            var products = await productRepository.GetAllAsync();
+            var products = await productRepository.GetAllAsync(PageSize: int.MaxValue);
             var categoryDistribution = new CategoryDistributionDto();
             categoryDistribution.TotalCategories = categories.Count();
             categoryDistribution.TotalItemsInCategories = products.Count();
@@ -54,7 +54,7 @@ namespace APIPractice.Services
         public async Task<InventorySummaryDto> InventorySummary()
         {
             var invSummary = new InventorySummaryDto();
-            var products = await productRepository.GetAllAsync();
+            var products = await productRepository.GetAllAsync(PageSize: int.MaxValue);
             invSummary.TotalItems = products.Count();
             invSummary.Instock = products.Count(p => p.Quantity > p.Threshold);
             invSummary.LowStock = products.Count(p => p.Quantity <= p.Threshold && p.Quantity>0);

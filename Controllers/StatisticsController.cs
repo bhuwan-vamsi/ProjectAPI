@@ -62,7 +62,7 @@ namespace APIPractice.Controllers
             }
             catch (Exception)
             {
-                return BadRequest("An error occurred while fetching the fast moving product.");
+                return BadRequest(BadResponse<string>.Execute("An error occurred while fetching the fast moving product."));
             }
         }
         [HttpGet]
@@ -81,7 +81,7 @@ namespace APIPractice.Controllers
             }
             catch (Exception)
             {
-                return BadRequest("An error occurred while fetching the product price analysis.");
+                return BadRequest(BadResponse<string>.Execute("An error occurred while fetching the product price analysis."));
             }
         }
         [HttpGet]
@@ -96,7 +96,7 @@ namespace APIPractice.Controllers
             }
             catch (Exception)
             {
-                return BadRequest("An error occurred while fetching the revenue analysis");
+                return BadRequest(BadResponse<string>.Execute("An error occurred while fetching the revenue analysis"));
             }
         }
     }

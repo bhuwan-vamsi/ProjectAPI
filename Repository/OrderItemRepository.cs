@@ -66,20 +66,38 @@ namespace APIPractice.Repository
             {
                 throw new Exception("Order Items not found");
             }
-            var sellingPrice =  await orderItems
+            // 1. First: Fetch filtered data from DB
+            var recentOrderItems = await db.OrderItems
                                     .Where(item => item.ProductId == id)
                                     .Join(db.Orders,
                                         item => item.OrderId,
                                         order => order.Id,
-                                        (item, order) => new { item.UnitPrice, item.Quantity, CreatedDate = new DateTime( order.CreatedAt.Year, order.CreatedAt.Month , 1) })
-                                    .Where(x => x.CreatedDate >= DateTime.Now.AddMonths(-12))
-                                    .OrderBy(x => x.CreatedDate)
+                                        (item, order) => new
+                                        {
+                                            item.UnitPrice,
+                                            item.Quantity,
+                                            order.CreatedAt
+                                        })
+                                    .Where(x => x.CreatedAt >= DateTime.Now.AddMonths(-12))
+                                    .ToListAsync(); // <-- Fetch to memory here
+
+            // 2. Then: Do date manipulation and grouping in memory (LINQ to Objects)
+            var sellingPrice = recentOrderItems
+                                    .Select(x => new
+                                    {
+                                        x.UnitPrice,
+                                        x.Quantity,
+                                        CreatedDate = new DateTime(x.CreatedAt.Year, x.CreatedAt.Month, 1)
+                                    })
                                     .GroupBy(x => new { x.UnitPrice, x.CreatedDate })
-                                    .Select( u => new SellingPrice{ 
-                                        Quantity = u.Sum(x=>x.Quantity), 
-                                        Price = u.Key.UnitPrice, 
-                                        Month = u.Key.CreatedDate })
-                                    .ToListAsync();
+                                    .OrderBy(g => g.Key.CreatedDate)
+                                    .Select(g => new SellingPrice
+                                    {
+                                        Price = g.Key.UnitPrice,
+                                        Month = g.Key.CreatedDate,
+                                        Quantity = g.Sum(x => x.Quantity)
+                                    })
+                                    .ToList();
             return sellingPrice;
         }
     }

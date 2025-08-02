@@ -5,6 +5,6 @@
         public decimal TotalRevenue { get; set; }
         public decimal Profit { get; set; }
         public decimal CostPrice { get; set; }
-        public decimal ProfitPercentage => CostPrice == 0 ? 0 : (Profit / CostPrice) * 100;
+        public decimal ProfitPercentage => Math.Round(CostPrice == 0 ? 0 : (Profit / CostPrice) * 100, 2);
     }
 }
