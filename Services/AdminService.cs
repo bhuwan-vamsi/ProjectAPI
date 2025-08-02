@@ -1,4 +1,5 @@
-﻿using APIPractice.Models.Domain;
+﻿using APIPractice.Exceptions;
+using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
 using APIPractice.Repository;
 using APIPractice.Repository.IRepository;
@@ -39,26 +40,44 @@ namespace APIPractice.Services
                     {
                         if (registerEmployeeRequest.Role.ToLower() == "manager")
                         {
-                            await userRepository.AddManager(registerEmployeeRequest, identityUser);
+                            try
+                            {
+                                await userRepository.AddManager(registerEmployeeRequest, identityUser);
+                            }
+                            catch (Exception e)
+                            {
+                                await userManager.DeleteAsync(identityUser);
+                                throw new Exception(e.Message);
+                            }
                         }
                         else if (registerEmployeeRequest.Role.ToLower() == "employee")
                         {
-                            await userRepository.AddEmployee(registerEmployeeRequest, identityUser);
+                            try
+                            {
+                                await userRepository.AddEmployee(registerEmployeeRequest, identityUser);
+                            }
+                            catch (Exception e)
+                            {
+                                await userManager.DeleteAsync(identityUser);
+                                throw new Exception(e.Message);
+                            }
                         }
                     }
                     else
                     {
-                        throw new Exception("Invalid Role");
+                        await userManager.DeleteAsync(identityUser);
+                        throw new ArgumentException("Invalid Role");
                     }
                 }
                 else
                 {
-                    throw new Exception("Role not specified");
+                    await userManager.DeleteAsync(identityUser);
+                    throw new ArgumentNullException("Role not specified");
                 }
             }
             else
             {
-                throw new Exception("Username already exists");
+                throw new ConflictException("Username already exists");
             }
         }
 

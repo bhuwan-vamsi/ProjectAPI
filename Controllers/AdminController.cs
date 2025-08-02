@@ -1,4 +1,5 @@
 ﻿using APIPractice.CustomAcitonFilters;
+using APIPractice.Exceptions;
 using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
 using APIPractice.Models.Responses;
@@ -55,6 +56,10 @@ namespace APIPractice.Controllers
             {
                 await adminService.RegisterEmployee(registerEmployeeRequest);
                 return Created();
+            }
+            catch(ConflictException ex)
+            {
+                return Conflict(ConflictResponse<string>.Execute(ex.Message));
             }
             catch (Exception ex)
             {

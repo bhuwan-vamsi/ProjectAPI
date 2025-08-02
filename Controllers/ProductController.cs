@@ -23,7 +23,7 @@ namespace APIPractice.Controller
         [HttpGet]
         [ValidateModel]
         [Authorize(Roles = "Customer,Manager")]
-        public async Task<IActionResult> GetAll([FromQuery] string? category, [FromQuery] string? filterQuery, [FromQuery]string? sortBy,[FromQuery] bool IsAscending,[FromQuery] int PageNumber=1, [FromQuery] int PageSize = int.MaxValue)
+        public async Task<IActionResult> GetAll([FromQuery] string? category, [FromQuery] string? filterQuery, [FromQuery]string? sortBy,[FromQuery] bool IsAscending,[FromQuery] int PageNumber=1, [FromQuery] int PageSize=10)
         {
             try
             {
@@ -43,19 +43,22 @@ namespace APIPractice.Controller
                         Category = p.Category
                     }).ToList();
 
-                    return Ok(productsCustomerDto);
+                    return Ok(OkResponse<List<ProductCustomerDto>>.Success(productsCustomerDto));
                 }
 
                 if (role == "Manager")
                 {
-                    return Ok(products);
+                    return Ok(OkResponse <List<ProductDto>>.Success(products));
                 }
-
                 return Forbid();
             }
-            catch (KeyNotFoundException ex)
+            catch (KeyNotFoundException)
             {
-                return BadRequest(BadResponse<string>.Execute(ex.Message));
+                return NotFound(NotFoundResponse<string>.Execute("Product Not Found."));
+            }
+            catch (Exception)
+            {
+                return BadRequest(BadResponse<string>.Execute("An error occurred while fetching the products."));
             }
             
         }
@@ -89,9 +92,13 @@ namespace APIPractice.Controller
                 }
                 return Forbid();
             }
-            catch (KeyNotFoundException ex) 
+            catch (KeyNotFoundException) 
             {
-                return BadRequest(BadResponse<string>.Execute(ex.Message));
+                return NotFound(NotFoundResponse<string>.Execute("Product Not Found."));
+            }
+            catch (Exception)
+            {
+                return BadRequest(BadResponse<string>.Execute("An error occurred while fetching the product."));
             }
         }
 
@@ -100,9 +107,16 @@ namespace APIPractice.Controller
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> CreateProduct([FromBody] CreateProductDto entity)
         {
-            var managerId = User.FindFirstValue(ClaimTypes.NameIdentifier)??throw new UnauthorizedAccessException("Invalid User");
-            var product = await productService.CreateProductAsync(entity, Guid.Parse(managerId));
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, entity);
+            try
+            {
+                var managerId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("Invalid User");
+                var product = await productService.CreateProductAsync(entity, Guid.Parse(managerId));
+                return CreatedAtAction(nameof(GetById), new { id = product.Id }, entity);
+            }
+            catch (Exception)
+            {
+                return BadRequest(BadResponse<string>.Execute("An error occurred while creating the product."));
+            }
         }
 
         [HttpPut]
@@ -117,14 +131,18 @@ namespace APIPractice.Controller
                 var managerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if(managerId == null)
                 {
-                    return BadRequest("Invalid Token");
+                    return BadRequest(BadResponse<string>.Execute("Invalid Token"));
                 }
                 await productService.UpdateProductAsync(id, entity, Guid.Parse(managerId));
                 return Ok(OkResponse<string>.Success("Updated Successfully"));
             }
             catch (KeyNotFoundException ex)
             {
-                return BadRequest(BadResponse<string>.Execute(ex.Message));
+                return NotFound(NotFoundResponse<string>.Execute("Product Not Found."));
+            }
+            catch (Exception)
+            {
+                return BadRequest(BadResponse<string>.Execute("An error occurred while updating the product."));
             }
         }
 
@@ -142,7 +160,11 @@ namespace APIPractice.Controller
             }
             catch (KeyNotFoundException ex)
             {
-                return BadRequest(BadResponse<string>.Execute(ex.Message));
+                return NotFound(NotFoundResponse<string>.Execute("Product Not Found"));
+            }
+            catch (Exception)
+            {
+                return BadRequest(BadResponse<string>.Execute("An error occurred while disabling/enabling the product."));
             }
         }
     }

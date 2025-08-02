@@ -17,10 +17,10 @@ namespace APIPractice.Data
             var customerId = "5ae289a5-da00-4d60-8b1e-4183a019d8c1";
             var adminId = "e10adcf6-d187-45bb-b32b-a040a9023e7d";
             var roles = new List<IdentityRole> {
-                new IdentityRole { 
-                    Id = managerId, 
-                    ConcurrencyStamp = managerId, 
-                    Name= "Manager", 
+                new IdentityRole {
+                    Id = managerId,
+                    ConcurrencyStamp = managerId,
+                    Name= "Manager",
                     NormalizedName = "MANAGER"
                 },
                 new IdentityRole

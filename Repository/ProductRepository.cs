@@ -22,7 +22,7 @@ namespace APIPractice.Repository
             _db = db;
             this.transactionManager = transactionManager;
         }
-        public async Task<List<Product>> GetAllAsync(string? category, string? filterQuery = null,string? sortBy=null, bool isAscending= true, int pageNumber=1, int pageSize= int.MaxValue)
+        public async Task<List<Product>> GetAllAsync(string? category, string? filterQuery = null,string? sortBy=null, bool isAscending= true, int pageNumber=1, int pageSize= 10)
         {
             var products = _db.Products.Include("Category").AsQueryable();
 
@@ -94,7 +94,9 @@ namespace APIPractice.Repository
                         Id = Guid.NewGuid(),
                         ProductId = existingProduct.Id,
                         ManagerId = managerId,
-                        QuantityIn = updatedProduct.Quantity,
+                        Price = updatedProduct.Price,
+                        QuantityIn = updatedProduct.Quantity - existingProduct.Quantity,
+                        QuantityRemaining = updatedProduct.Quantity,
                         UpdatedAt = DateTime.Now
                     };
                     await _db.StockUpdateHistories.AddAsync(stockUpdate);
