@@ -27,6 +27,12 @@ namespace APIPractice
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddCors(options =>             {
+                options.AddPolicy("AllowAllOrigins",
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader());
+            });
 
             // Add services to the container.
 
@@ -126,6 +132,7 @@ namespace APIPractice
 
             var app = builder.Build();
 
+            app.UseCors("AllowAllOrigins");
             app.UseMiddleware<BadRequestExceptionHandler>();
 
             //using (var scope = app.Services.CreateScope())
