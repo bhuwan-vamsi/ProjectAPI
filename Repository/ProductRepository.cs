@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace APIPractice.Repository
 {
-    public class ProductRepository : IProductRepository<Product>
+    public class ProductRepository : IProductRepository
     {
         private readonly ApplicationDbContext _db;
         private readonly TransactionManager transactionManager;
@@ -68,20 +68,37 @@ namespace APIPractice.Repository
             return product;
         }
 
-        public async Task<Product> CreateAsync(Product entity, Guid managerId)
+        public async Task<Product> CreateAsync(CreateProductDto entity, Guid managerId)
         {
-            entity.IsActive = true;
+            var category = await _db.Categories.FirstOrDefaultAsync(u => u.Id == entity.CategoryId);
+            if (category == null)
+            {
+                throw new KeyNotFoundException("Invalid Category");
+            }
+            var product = new Product
+            {
+                Name = entity.Name,
+                Price = entity.Price,
+                Units = entity.Units,
+                Quantity = entity.Quantity,
+                Threshold = entity.Threshold,
+                ImageUrl = entity.ImageUrl,
+                CategoryId = entity.CategoryId,
+                Category = category
+            };
             var stockUpdate = new StockUpdateHistory
             {
                 Id = Guid.NewGuid(),
-                ProductId = entity.Id,
+                ProductId = product.Id,
                 ManagerId = managerId,
+                Price = entity.CostPrice,
                 QuantityIn = entity.Quantity,
+                QuantityRemaining = entity.Quantity,
                 UpdatedAt = DateTime.Now
             };
-            await _db.Products.AddAsync(entity);
+            await _db.Products.AddAsync(product);
             await _db.SaveChangesAsync();
-            return entity;
+            return product;
         }
         public async Task UpdateAsync(Product existingProduct, UpdateProductDto updatedProduct, Guid managerId)
         {
@@ -109,7 +126,7 @@ namespace APIPractice.Repository
                 existingProduct.Name = updatedProduct.Name;
                 existingProduct.Price = updatedProduct.Price;
                 existingProduct.Units = updatedProduct.Units;
-                existingProduct.Quantity = updatedProduct.Quantity;
+                existingProduct.Quantity = existingProduct.Quantity + updatedProduct.Quantity;
                 existingProduct.Threshold = updatedProduct.Threshold;
                 existingProduct.ImageUrl = updatedProduct.ImageUrl;
                 existingProduct.CategoryId = updatedProduct.CategoryId;

@@ -9,18 +9,17 @@ namespace APIPractice.Services
 {
     public class ProductService : IProductService
     {
-        private readonly IProductRepository<Product> productRepo;
+        private readonly IProductRepository productRepo;
         private readonly IMapper mapper;
 
-        public ProductService(IProductRepository<Product> productRepo, IMapper mapper) 
+        public ProductService(IProductRepository productRepo, IMapper mapper) 
         {
             this.productRepo = productRepo;
             this.mapper = mapper;
         }
         public async Task<Product> CreateProductAsync(CreateProductDto createProductDto, Guid managerId)
         {
-            var product = mapper.Map<Product>(createProductDto);
-            return (await productRepo.CreateAsync(product,managerId));
+            return (await productRepo.CreateAsync(createProductDto,managerId));
         }
 
         public async Task DeleteProductAsync(Guid id)

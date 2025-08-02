@@ -9,13 +9,13 @@ namespace APIPractice.Services
 {
     public class StatisticService : IStatisticService
     {
-        private readonly IProductRepository<Product> productRepository;
+        private readonly IProductRepository productRepository;
         private readonly IOrderItemRepository orderItemRepository;
         private readonly IStockRepository stockRepository;
         private readonly IOrderRepository orderRepository;
         private readonly IMapper mapper;
 
-        public StatisticService(IProductRepository<Product> productRepository, IOrderItemRepository orderItemRepository, IStockRepository stockRepository, IOrderRepository orderRepository, IMapper mapper)
+        public StatisticService(IProductRepository productRepository, IOrderItemRepository orderItemRepository, IStockRepository stockRepository, IOrderRepository orderRepository, IMapper mapper)
         {
             this.productRepository = productRepository;
             this.orderItemRepository = orderItemRepository;
@@ -90,9 +90,9 @@ namespace APIPractice.Services
                 }
                 var profit = (saleRevenue - cost);
                 totalProfit += profit;
-                if(!productAnalysisList.ContainsKey(sale.Month.ToString("MMM")))
+                if(!productAnalysisList.ContainsKey(sale.Month.ToString("MMM yyyy")))
                 {
-                    productAnalysisList[sale.Month.ToString("MMM")] = new ProductAnalysisDto
+                    productAnalysisList[sale.Month.ToString("MMM yyyy")] = new ProductAnalysisDto
                     {
                         TotalRevenue = saleRevenue,
                         Profit = profit,
@@ -101,9 +101,9 @@ namespace APIPractice.Services
                 }
                 else
                 {
-                    productAnalysisList[sale.Month.ToString("MMM")].TotalRevenue += saleRevenue;
-                    productAnalysisList[sale.Month.ToString("MMM")].Profit += profit;
-                    productAnalysisList[sale.Month.ToString("MMM")].CostPrice += cost;
+                    productAnalysisList[sale.Month.ToString("MMM yyyy")].TotalRevenue += saleRevenue;
+                    productAnalysisList[sale.Month.ToString("MMM yyyy")].Profit += profit;
+                    productAnalysisList[sale.Month.ToString("MMM yyyy")].CostPrice += cost;
                 }
             }
             return productAnalysisList;
