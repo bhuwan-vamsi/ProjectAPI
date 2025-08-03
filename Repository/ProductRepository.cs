@@ -102,7 +102,7 @@ namespace APIPractice.Repository
                     await _db.StockUpdateHistories.AddAsync(stockUpdate);
                     await _db.SaveChangesAsync();
                 }
-                else if (existingProduct.Quantity >= updatedProduct.Quantity)
+                else if (existingProduct.Quantity > updatedProduct.Quantity)
                 {
                     throw new InvalidOperationException("Cannot reduce quantity below current stock.");
                 }
@@ -112,7 +112,7 @@ namespace APIPractice.Repository
                 existingProduct.Quantity = updatedProduct.Quantity;
                 existingProduct.Threshold = updatedProduct.Threshold;
                 existingProduct.ImageUrl = updatedProduct.ImageUrl;
-                existingProduct.CategoryId = updatedProduct.CategoryId;
+                existingProduct.CategoryId = updatedProduct.Category.Id;
                 _db.Products.Update(existingProduct);
                 await _db.SaveChangesAsync();
             });
