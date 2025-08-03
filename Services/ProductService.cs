@@ -38,18 +38,7 @@ namespace APIPractice.Services
             var productDto = mapper.Map<List<ProductDto>>(products);
             foreach(var product in productDto)
             {
-                if(product.Quantity < product.Threshold)
-                {
-                    product.ProductStatus = "LowStock";
-                }
-                else if (product.Quantity == 0)
-                {
-                    product.ProductStatus = "OutOfStock";
-                }
-                else
-                {
-                    product.ProductStatus = "InStock";
-                }
+                product.ProductStatus = await productRepo.GetProductStatus(product);
             }
             return productDto;
 
@@ -59,7 +48,8 @@ namespace APIPractice.Services
             var product = await productRepo.GetAsync(id);
             if(role == "Customer" && product.IsActive == false)
             {
-                throw new KeyNotFoundException("Product Not Found");            }
+                throw new KeyNotFoundException("Product Not Found");            
+            }
             return mapper.Map<ProductDto>(product);
         }
 

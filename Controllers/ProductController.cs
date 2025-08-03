@@ -45,12 +45,7 @@ namespace APIPractice.Controller
 
                     return Ok(OkResponse<List<ProductCustomerDto>>.Success(productsCustomerDto));
                 }
-
-                if (role == "Manager")
-                {
-                    return Ok(OkResponse <List<ProductDto>>.Success(products));
-                }
-                return Forbid();
+                return Ok(OkResponse<List<ProductDto>>.Success(products));
             }
             catch (KeyNotFoundException)
             {

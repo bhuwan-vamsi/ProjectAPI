@@ -48,7 +48,10 @@ namespace APIPractice.Services
             {
                 throw new KeyNotFoundException("No Product Foud");
             }
-            return mapper.Map<ProductDto>(mostSoldProduct);
+            var productDto = mapper.Map<ProductDto>(mostSoldProduct);
+            productDto.Category = mostSoldProduct.Category;
+            productDto.ProductStatus = await productRepository.GetProductStatus(productDto);
+            return productDto;
         }
 
         public async Task<InventorySummaryDto> InventorySummary()

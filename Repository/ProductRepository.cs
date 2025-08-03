@@ -100,6 +100,23 @@ namespace APIPractice.Repository
             await _db.SaveChangesAsync();
             return product;
         }
+        public async Task<string> GetProductStatus(ProductDto product)
+        {
+            if(product == null)
+            {
+                throw new KeyNotFoundException("Product Not Found.");
+            }
+            var productStatus = new string[] {"In Stock", "Out Of Stock", "Low Stock"};
+            if(product.Quantity >= product.Threshold)
+            {
+                return productStatus[0];
+            }
+            if(product.Quantity == 0)
+            {
+                return productStatus[1];
+            }
+            return productStatus[2];
+        }
         public async Task UpdateAsync(Product existingProduct, UpdateProductDto updatedProduct, Guid managerId)
         {
             await transactionManager.ExecuteInTransactionAsync(async () =>
@@ -111,7 +128,7 @@ namespace APIPractice.Repository
                         Id = Guid.NewGuid(),
                         ProductId = existingProduct.Id,
                         ManagerId = managerId,
-                        Price = updatedProduct.Price,
+                        Price = updatedProduct.CostPrice,
                         QuantityIn = updatedProduct.Quantity - existingProduct.Quantity,
                         QuantityRemaining = updatedProduct.Quantity,
                         UpdatedAt = DateTime.Now
