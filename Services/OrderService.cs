@@ -20,11 +20,11 @@ namespace APIPractice.Services
         private readonly ICustomerRepository customerRepository;
         private readonly IOrderRepository orderRepository;
         private readonly IOrderStatusRepository orderStatusRepository;
-        private readonly IProductRepository<Product> productRepository;
+        private readonly IProductRepository productRepository;
 
         public OrderService(IMapper mapper, IOrderItemRepository orderItemRepository
             , ICustomerRepository customerRepository, IOrderRepository orderRepository,
-            IOrderStatusRepository orderStatusRepository, IProductRepository<Product> productRepository)
+            IOrderStatusRepository orderStatusRepository, IProductRepository productRepository)
         {
             this.mapper = mapper;
             this.orderItemRepository = orderItemRepository;

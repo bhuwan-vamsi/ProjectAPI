@@ -12,7 +12,7 @@ using System.Collections.Generic;
 
 namespace APIPractice.Repository
 {
-    public class ProductRepository : IProductRepository<Product>
+    public class ProductRepository : IProductRepository
     {
         private readonly ApplicationDbContext _db;
         private readonly TransactionManager transactionManager;
@@ -68,20 +68,54 @@ namespace APIPractice.Repository
             return product;
         }
 
-        public async Task<Product> CreateAsync(Product entity, Guid managerId)
+        public async Task<Product> CreateAsync(CreateProductDto entity, Guid managerId)
         {
-            entity.IsActive = true;
+            var category = await _db.Categories.FirstOrDefaultAsync(u => u.Id == entity.CategoryId);
+            if (category == null)
+            {
+                throw new KeyNotFoundException("Invalid Category");
+            }
+            var product = new Product
+            {
+                Name = entity.Name,
+                Price = entity.Price,
+                Units = entity.Units,
+                Quantity = entity.Quantity,
+                Threshold = entity.Threshold,
+                ImageUrl = entity.ImageUrl,
+                CategoryId = entity.CategoryId,
+                Category = category
+            };
             var stockUpdate = new StockUpdateHistory
             {
                 Id = Guid.NewGuid(),
-                ProductId = entity.Id,
+                ProductId = product.Id,
                 ManagerId = managerId,
+                Price = entity.CostPrice,
                 QuantityIn = entity.Quantity,
+                QuantityRemaining = entity.Quantity,
                 UpdatedAt = DateTime.Now
             };
-            await _db.Products.AddAsync(entity);
+            await _db.Products.AddAsync(product);
             await _db.SaveChangesAsync();
-            return entity;
+            return product;
+        }
+        public async Task<string> GetProductStatus(ProductDto product)
+        {
+            if(product == null)
+            {
+                throw new KeyNotFoundException("Product Not Found.");
+            }
+            var productStatus = new string[] {"In Stock", "Out Of Stock", "Low Stock"};
+            if(product.Quantity >= product.Threshold)
+            {
+                return productStatus[0];
+            }
+            if(product.Quantity == 0)
+            {
+                return productStatus[1];
+            }
+            return productStatus[2];
         }
         public async Task UpdateAsync(Product existingProduct, UpdateProductDto updatedProduct, Guid managerId)
         {
@@ -94,7 +128,7 @@ namespace APIPractice.Repository
                         Id = Guid.NewGuid(),
                         ProductId = existingProduct.Id,
                         ManagerId = managerId,
-                        Price = updatedProduct.Price,
+                        Price = updatedProduct.CostPrice,
                         QuantityIn = updatedProduct.Quantity - existingProduct.Quantity,
                         QuantityRemaining = updatedProduct.Quantity,
                         UpdatedAt = DateTime.Now
@@ -109,7 +143,7 @@ namespace APIPractice.Repository
                 existingProduct.Name = updatedProduct.Name;
                 existingProduct.Price = updatedProduct.Price;
                 existingProduct.Units = updatedProduct.Units;
-                existingProduct.Quantity = updatedProduct.Quantity;
+                existingProduct.Quantity = existingProduct.Quantity + updatedProduct.Quantity;
                 existingProduct.Threshold = updatedProduct.Threshold;
                 existingProduct.ImageUrl = updatedProduct.ImageUrl;
                 existingProduct.CategoryId = updatedProduct.Category.Id;
