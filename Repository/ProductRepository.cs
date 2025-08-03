@@ -128,7 +128,6 @@ namespace APIPractice.Repository
                         Id = Guid.NewGuid(),
                         ProductId = existingProduct.Id,
                         ManagerId = managerId,
-                        Price = updatedProduct.CostPrice,
                         QuantityIn = updatedProduct.Quantity - existingProduct.Quantity,
                         QuantityRemaining = updatedProduct.Quantity,
                         UpdatedAt = DateTime.Now
