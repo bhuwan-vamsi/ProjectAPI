@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using System.Security.Authentication;
 
 namespace APIPractice.Services
 {
@@ -84,11 +85,11 @@ namespace APIPractice.Services
                         var response = new LoginResponseDto { JwtToken = jwtToken };
                         return response;
                     }
-                    throw new Exception("Invalid Role.");
+                    throw new ArgumentException("Invalid Role.");
                 }
-                throw new Exception("Check your Username or Password");
+                throw new AuthenticationException("Check your Username or Password");
             }
-            throw new Exception("Something Went Wrong.");
+            throw new ArgumentException("Something Went Wrong.");
         }
 
         

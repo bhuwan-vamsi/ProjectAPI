@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Authentication;
 using System.Security.Claims;
 
 namespace APIPractice.Controller
@@ -32,6 +33,14 @@ namespace APIPractice.Controller
             {
                 var response = await authService.LoginUser(loginRequest);
                 return Ok(OkResponse<LoginResponseDto>.Success(response));
+            }
+            catch (AuthenticationException ex)
+            {
+                return Unauthorized(UnauthorisedResponse<string>.Execute(ex.Message));
+            }
+            catch (ArgumentException ex)
+            {
+                return Unauthorized(UnauthorisedResponse<string>.Execute(ex.Message));
             }
             catch (Exception ex)
             {

@@ -82,11 +82,7 @@ namespace APIPractice.Controller
                     };
                     return Ok(OkResponse<ProductCustomerDto>.Success(productCustomerDto));
                 }
-                else if (role == "Manager")
-                {
-                    return Ok(OkResponse<ProductDto>.Success(product));
-                }
-                return Forbid();
+                return Ok(OkResponse<ProductDto>.Success(product));
             }
             catch (KeyNotFoundException)
             {
@@ -127,14 +123,14 @@ namespace APIPractice.Controller
                 var managerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (managerId == null)
                 {
-                    return BadRequest(BadResponse<string>.Execute("Invalid Token"));
+                    return Unauthorized(UnauthorisedResponse<string>.Execute("Invalid Token"));
                 }
                 await productService.UpdateProductAsync(id, entity, Guid.Parse(managerId));
                 return Ok(OkResponse<string>.Success("Updated Successfully"));
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(NotFoundResponse<string>.Execute("Product Not Found."));
+                return NotFound(NotFoundResponse<string>.Execute(ex.Message));
             }
             catch (Exception)
             {
@@ -156,7 +152,7 @@ namespace APIPractice.Controller
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(NotFoundResponse<string>.Execute("Product Not Found"));
+                return NotFound(NotFoundResponse<string>.Execute(ex.Message));
             }
             catch (Exception)
             {

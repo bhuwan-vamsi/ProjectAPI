@@ -29,6 +29,7 @@ namespace APIPractice.Controllers
         {
             return Ok(await adminService.GetAllEmployee());
         }
+
         [HttpGet]
         [Route("{id}")]
         [ValidateModel]
@@ -49,7 +50,7 @@ namespace APIPractice.Controllers
         [HttpPost]
         [Route("RegisterEmployee")]
         [ValidateModel]
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Regsiter([FromBody] RegisterEmployeeRequest registerEmployeeRequest)
         {
             try
@@ -66,6 +67,7 @@ namespace APIPractice.Controllers
                 return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
+
         [HttpPost]
         [Route("AssignManager")]
         [ValidateModel]
@@ -76,6 +78,10 @@ namespace APIPractice.Controllers
             {
                 await adminService.AssignManager(updateEmployee);
                 return Ok(OkResponse<string>.Success("Manager Assigned"));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(NotFoundResponse<string>.Execute(ex.Message));
             }
             catch (Exception ex)
             {
