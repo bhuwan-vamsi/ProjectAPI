@@ -11,5 +11,6 @@ namespace APIPractice.Services.IService
         Task<Product> CreateProductAsync(CreateProductDto product, Guid managerId);
         Task UpdateProductAsync(Guid id, UpdateProductDto product, Guid managerId);
         Task DeleteProductAsync(Guid id);
+        Task<List<CategoryDto>> GetAllCategories();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
+using APIPractice.Repository;
 using APIPractice.Repository.IRepository;
 using APIPractice.Services.IService;
 using AutoMapper;
@@ -11,11 +12,13 @@ namespace APIPractice.Services
     {
         private readonly IProductRepository productRepo;
         private readonly IMapper mapper;
+        private readonly ICategoryRepository categoryRepository;
 
-        public ProductService(IProductRepository productRepo, IMapper mapper) 
+        public ProductService(IProductRepository productRepo, IMapper mapper, ICategoryRepository categoryRepository) 
         {
             this.productRepo = productRepo;
             this.mapper = mapper;
+            this.categoryRepository = categoryRepository;
         }
         public async Task<Product> CreateProductAsync(CreateProductDto createProductDto, Guid managerId)
         {
@@ -30,6 +33,12 @@ namespace APIPractice.Services
                 throw new KeyNotFoundException("Product Not Found");
             }
             await productRepo.DeleteAsync(product);
+        }
+
+        public async Task<List<CategoryDto>> GetAllCategories()
+        {
+            List<Category> categories = await categoryRepository.GetCategoriesAsync();
+            return mapper.Map<List<CategoryDto>>(categories);
         }
 
         public async Task<List<ProductDto>> GetAllProductAsync(string? categoryName, string? filterQuery, string? sortBy, bool IsAscending, int PageNumber, int PageSize)

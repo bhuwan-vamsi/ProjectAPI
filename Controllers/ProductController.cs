@@ -1,11 +1,12 @@
 ﻿using APIPractice.CustomAcitonFilters;
 using APIPractice.Models.DTO;
+using APIPractice.Models.Responses;
+using APIPractice.Services;
 using APIPractice.Services.IService;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.AspNet.Identity;
-using APIPractice.Models.Responses;
 
 namespace APIPractice.Controller
 {
@@ -23,11 +24,11 @@ namespace APIPractice.Controller
         [HttpGet]
         [ValidateModel]
         [Authorize(Roles = "Customer,Manager")]
-        public async Task<IActionResult> GetAll([FromQuery] string? category, [FromQuery] string? filterQuery, [FromQuery]string? sortBy,[FromQuery] bool IsAscending,[FromQuery] int PageNumber=1, [FromQuery] int PageSize=10)
+        public async Task<IActionResult> GetAll([FromQuery] string? category, [FromQuery] string? filterQuery, [FromQuery] string? sortBy, [FromQuery] bool IsAscending, [FromQuery] int PageNumber = 1, [FromQuery] int PageSize = 10)
         {
             try
             {
-                var products = await productService.GetAllProductAsync(category, filterQuery,sortBy, IsAscending, PageNumber, PageSize);
+                var products = await productService.GetAllProductAsync(category, filterQuery, sortBy, IsAscending, PageNumber, PageSize);
 
                 var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
@@ -55,7 +56,7 @@ namespace APIPractice.Controller
             {
                 return BadRequest(BadResponse<string>.Execute("An error occurred while fetching the products."));
             }
-            
+
         }
 
         [HttpGet]
@@ -66,7 +67,7 @@ namespace APIPractice.Controller
         {
             try
             {
-                var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value??throw new UnauthorizedAccessException("Invalid User");
+                var role = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value ?? throw new UnauthorizedAccessException("Invalid User");
                 var product = await productService.GetProductAsync(id, role);
                 if (role == "Customer")
                 {
@@ -81,13 +82,13 @@ namespace APIPractice.Controller
                     };
                     return Ok(OkResponse<ProductCustomerDto>.Success(productCustomerDto));
                 }
-                else if(role== "Manager")
+                else if (role == "Manager")
                 {
                     return Ok(OkResponse<ProductDto>.Success(product));
                 }
                 return Forbid();
             }
-            catch (KeyNotFoundException) 
+            catch (KeyNotFoundException)
             {
                 return NotFound(NotFoundResponse<string>.Execute("Product Not Found."));
             }
@@ -124,7 +125,7 @@ namespace APIPractice.Controller
             try
             {
                 var managerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if(managerId == null)
+                if (managerId == null)
                 {
                     return BadRequest(BadResponse<string>.Execute("Invalid Token"));
                 }
@@ -160,6 +161,22 @@ namespace APIPractice.Controller
             catch (Exception)
             {
                 return BadRequest(BadResponse<string>.Execute("An error occurred while disabling/enabling the product."));
+            }
+        }
+        [HttpGet]
+        [Route("category")]
+        [ValidateModel]
+        [Authorize(Roles = "Customer, Manager")]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            try
+            {
+                List<CategoryDto> categories = await productService.GetAllCategories();
+                return Ok(OkResponse<List<CategoryDto>>.Success(categories));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(BadResponse<string>.Execute(ex.Message));
             }
         }
     }
