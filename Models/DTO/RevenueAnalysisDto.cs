@@ -8,6 +8,7 @@
         public int TotalOrders { get; set; }
         public int PendingOrders { get; set; }
         public int CompletedOrders { get; set; }
-        public Dictionary<string, decimal> YearlyRevenue { get; set; } = new Dictionary<string, decimal>();
+        public required object MostSoldProduct { get; set; }
+        public List<YearlyReveneDto> YearlyRevenue { get; set; } = new List<YearlyReveneDto>();
     }
 }

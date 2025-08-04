@@ -1,4 +1,5 @@
 ﻿using APIPractice.Models.Domain;
+using APIPractice.Models.DTO;
 
 namespace APIPractice.Repository.IRepository
 {
@@ -12,6 +13,6 @@ namespace APIPractice.Repository.IRepository
         public Task<List<Order>> GetAllOrderList();
         public Task<List<Order>> GetOrdersByStatusAsync(string status);
         public Task<List<Order>> GetDeliveredOrdersByEmployeeAsync(Guid employeeId);
-        public Task<Dictionary<string, decimal>> GetTotalSalesByMonth();
+        public Task<List<YearlyReveneDto>> GetTotalSalesByMonth();
     }
 }

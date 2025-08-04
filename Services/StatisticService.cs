@@ -37,21 +37,8 @@ namespace APIPractice.Services
                 quantity += category.Products.Sum(q=>q.Quantity);
             }
             categoryDistribution.TotalQuantityInCategories = quantity;
-            categoryDistribution.LastUpdated = DateTime.Now.ToString("dd-MM-yy hh:mm tt");
+            categoryDistribution.LastUpdated = DateTime.Now.ToString("hh:mm tt");
             return categoryDistribution;
-        }
-
-        public async Task<ProductDto> MostSoldProducts()
-        {
-            var mostSoldProduct = await orderItemRepository.GetMostSoldItem();
-            if (mostSoldProduct == null)
-            {
-                throw new KeyNotFoundException("No Product Foud");
-            }
-            var productDto = mapper.Map<ProductDto>(mostSoldProduct);
-            productDto.Category = mostSoldProduct.Category;
-            productDto.ProductStatus = await productRepository.GetProductStatus(productDto);
-            return productDto;
         }
 
         public async Task<InventorySummaryDto> InventorySummary()
@@ -59,10 +46,10 @@ namespace APIPractice.Services
             var invSummary = new InventorySummaryDto();
             var products = await productRepository.GetAllAsync(PageSize: int.MaxValue);
             invSummary.TotalItems = products.Count();
-            invSummary.Instock = products.Count(p => p.Quantity > p.Threshold);
+            invSummary.InStock = products.Count(p => p.Quantity > p.Threshold);
             invSummary.LowStock = products.Count(p => p.Quantity <= p.Threshold && p.Quantity>0);
             invSummary.OutOfStock = products.Count(p => p.Quantity == 0);
-            invSummary.LastUpdated = DateTime.Now.ToString("dd-MM-yy hh:mm tt");
+            invSummary.LastUpdated = DateTime.Now.ToString("hh:mm tt");
             return invSummary;
         }
 
@@ -116,14 +103,20 @@ namespace APIPractice.Services
         {
             var orders = await orderRepository.GetAllOrderList();
             var deliveredOrders = orders.Where(u => u.DeliveredAt != null);
+            if(orders == null)
+            {
+                throw new KeyNotFoundException("No orders placed yet.");
+            }
+            var mostSoldProduct = await orderItemRepository.GetMostSoldItem();
             var revenueAnalysis = new RevenueAnalysisDto
             {
                 TotalSales = deliveredOrders.Sum(o => o.Amount),
-                AvgOrderValue = deliveredOrders.Sum(o=> o.Amount) / deliveredOrders.Count(),
+                AvgOrderValue = deliveredOrders.Count()==0 ? 0 : deliveredOrders.Sum(o=> o.Amount) / deliveredOrders.Count(),
                 ActiveCustomers = orders.Select(o => o.CustomerId).Distinct().Count(),
                 TotalOrders = orders.Count(),
                 PendingOrders = orders.Where(o => o.DeliveredAt == null).Count(),
-                CompletedOrders = deliveredOrders.Count()
+                CompletedOrders = deliveredOrders.Count(),
+                MostSoldProduct = mostSoldProduct
             };
             revenueAnalysis.YearlyRevenue = await orderRepository.GetTotalSalesByMonth();
             return revenueAnalysis;

@@ -47,25 +47,6 @@ namespace APIPractice.Controllers
             }
         }
         [HttpGet]
-        [Route("FastMovingProduct")]
-        [Authorize(Roles = "Manager")]
-        public async Task<IActionResult> GetFastMovingProducts()
-        {
-            try
-            {
-                var fastMovingProduct = await statisticService.MostSoldProducts();
-                return Ok(OkResponse<ProductDto>.Success(fastMovingProduct));
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound(NotFoundResponse<string>.Execute("No fast moving product found."));
-            }
-            catch (Exception)
-            {
-                return BadRequest(BadResponse<string>.Execute("An error occurred while fetching the fast moving product."));
-            }
-        }
-        [HttpGet]
         [Route("ProductPriceAnalysis/{id}")]
         [Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetProductPriceAnalysis([FromRoute] Guid id)
@@ -73,7 +54,7 @@ namespace APIPractice.Controllers
             try
             {
                 var priceAnalysis = await statisticService.ProductPriceAnalysis(id);
-                return Ok(priceAnalysis);
+                return Ok(OkResponse<Dictionary<string,ProductAnalysisDto>>.Success(priceAnalysis));
             }
             catch (KeyNotFoundException)
             {
@@ -92,7 +73,11 @@ namespace APIPractice.Controllers
             try
             {
                 var revenueAnalysis = await statisticService.RevenueAnalysis();
-                return Ok(revenueAnalysis);
+                return Ok(OkResponse<RevenueAnalysisDto>.Success(revenueAnalysis));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(NotFoundResponse<string>.Execute(ex.Message));
             }
             catch (Exception)
             {

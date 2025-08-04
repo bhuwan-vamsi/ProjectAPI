@@ -7,7 +7,7 @@ namespace APIPractice.Repository.IRepository
     {
         Task<OrderItem> AddAsync(OrderItem orderItem);
         Task<List<OrderItem>> GetAllByIdAsync(Guid id);
-        Task<Product> GetMostSoldItem();
+        Task<object> GetMostSoldItem();
         Task AddRangeAsync(List<OrderItem> orderItems);
         Task<List<SellingPrice>> SellingPrices(Guid id);
     }

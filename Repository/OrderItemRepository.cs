@@ -39,7 +39,7 @@ namespace APIPractice.Repository
             return orderItems;
         }
 
-        public async Task<Product> GetMostSoldItem()
+        public async Task<object> GetMostSoldItem()
         {
             var orderItems = db.OrderItems.Include("Product").AsQueryable();
             if (orderItems == null)
@@ -50,7 +50,7 @@ namespace APIPractice.Repository
                                     .GroupBy(oi => oi.Product)
                                     .Select(group => new {Product =group.Key, TotalQuantity =group.Sum(g=>g.Quantity)})
                                     .OrderByDescending(x=> x.TotalQuantity)
-                                    .Select(x=> x.Product)
+                                    .Select(x=> new { PName = x.Product.Name, Quantity =x.TotalQuantity})
                                     .FirstOrDefaultAsync();
             if(mostSoldProduct == null)
             {
