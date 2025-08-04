@@ -111,7 +111,7 @@ namespace APIPractice.Services
             var revenueAnalysis = new RevenueAnalysisDto
             {
                 TotalSales = deliveredOrders.Sum(o => o.Amount),
-                AvgOrderValue = deliveredOrders.Count()==0 ? 0 : deliveredOrders.Sum(o=> o.Amount) / deliveredOrders.Count(),
+                AvgOrderValue = Math.Round((deliveredOrders.Count()==0 ? 0 : deliveredOrders.Sum(o=> o.Amount) / deliveredOrders.Count()),2),
                 ActiveCustomers = orders.Select(o => o.CustomerId).Distinct().Count(),
                 TotalOrders = orders.Count(),
                 PendingOrders = orders.Where(o => o.DeliveredAt == null).Count(),
