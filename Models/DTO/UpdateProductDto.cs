@@ -15,8 +15,9 @@ namespace APIPractice.Models.DTO
         public int Quantity { get; set; }
         [Required]
         public int Threshold { get; set; }
+        public required string ProductStatus { get; set; }
         public string? ImageUrl { get; set; }
-        [Required]
-        public required Guid CategoryId { get; set; }
+        public required Category Category { get; set; }
+
     }
 }

@@ -27,6 +27,12 @@ namespace APIPractice
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddCors(options =>             {
+                options.AddPolicy("AllowAllOrigins",
+                    builder => builder.AllowAnyOrigin()
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader());
+            });
 
             // Add services to the container.
 
@@ -39,7 +45,7 @@ namespace APIPractice
             builder.Services.AddDbContext<ApplicationAuthDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultAuthConnection")));
             
             
-            builder.Services.AddScoped<IProductRepository<Product>, ProductRepository>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ITokenRepository, TokenRepository>();
             builder.Services.AddScoped<IOrderItemRepository, OrderItemRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
@@ -127,6 +133,7 @@ namespace APIPractice
 
             var app = builder.Build();
 
+            app.UseCors("AllowAllOrigins");
             app.UseMiddleware<BadRequestExceptionHandler>();
 
             //using (var scope = app.Services.CreateScope())

@@ -7,6 +7,8 @@ namespace APIPractice.Models.DTO
         [Required]
         public required string Name { get; set; }
         [Required]
+        public decimal CostPrice { get; set; }
+        [Required]
         public decimal Price { get; set; }
         [Required]
         public required string Units { get; set; }

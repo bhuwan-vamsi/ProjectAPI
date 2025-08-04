@@ -1,6 +1,7 @@
 ﻿using APIPractice.Data;
 using APIPractice.Infrastructure;
 using APIPractice.Models.Domain;
+using APIPractice.Models.DTO;
 using APIPractice.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 
@@ -111,7 +112,7 @@ namespace APIPractice.Repository
             var orders = await db.Orders.ToListAsync();
             return orders;
         }
-        public async Task<Dictionary<string, decimal>> GetTotalSalesByMonth()
+        public async Task<List<YearlyReveneDto>> GetTotalSalesByMonth()
         {
             var salesData = await db.Orders
                 .Where(o => o.DeliveredAt != null)
@@ -122,7 +123,12 @@ namespace APIPractice.Repository
                     TotalSales = g.Sum(o => o.Amount)
                 })
                 .ToListAsync();
-            return salesData.ToDictionary(x => x.Month, x => x.TotalSales);
+            var yearlyRevenue = new List<YearlyReveneDto>();
+            foreach(var sale in salesData)
+            {
+                yearlyRevenue.Add(new YearlyReveneDto { Month = sale.Month, Revenue = sale.TotalSales });
+            }
+            return yearlyRevenue;
         }
     }
 }

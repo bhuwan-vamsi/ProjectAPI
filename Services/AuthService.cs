@@ -84,9 +84,11 @@ namespace APIPractice.Services
                         var response = new LoginResponseDto { JwtToken = jwtToken };
                         return response;
                     }
+                    throw new Exception("Invalid Role.");
                 }
+                throw new Exception("Check your Username or Password");
             }
-            throw new Exception("Something Went Wrong");
+            throw new Exception("Something Went Wrong.");
         }
 
         
