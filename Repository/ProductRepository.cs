@@ -106,10 +106,11 @@ namespace APIPractice.Repository
             {
                 throw new KeyNotFoundException("Product Not Found.");
             }
+            await Task.Delay(100);
             var productStatus = new string[] {"In Stock", "Out Of Stock", "Low Stock"};
             if(product.Quantity >= product.Threshold)
             {
-                return productStatus[0];
+                return  productStatus[0];
             }
             if(product.Quantity == 0)
             {
