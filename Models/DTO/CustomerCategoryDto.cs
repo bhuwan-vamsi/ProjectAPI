@@ -8,7 +8,5 @@ namespace APIPractice.Models.DTO
         public Guid Id { get; set; }
         [Required]
         public required string Name { get; set; }
-        [Required]
-        public required string ImageUrl { get; set; }
     }
 }

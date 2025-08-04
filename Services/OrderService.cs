@@ -1,14 +1,10 @@
-﻿using APIPractice.Enums;
-using APIPractice.Exceptions;
+﻿using APIPractice.Exceptions;
 using APIPractice.Models.Domain;
 using APIPractice.Models.DTO;
-using APIPractice.Repository;
 using APIPractice.Repository.IRepository;
 using APIPractice.Services.IService;
 using AutoMapper;
-using System.Runtime.ConstrainedExecution;
 using System.Security.Claims;
-using System.Security.Cryptography;
 
 namespace APIPractice.Services
 {
@@ -111,11 +107,24 @@ namespace APIPractice.Services
             }
             foreach (Order order in orders)
             {
-                history.Add(new OrderHistoryDto { Id = order.Id, Status = order.OrderStatus.Name, 
-                    Name =order.Customer.Name, Mobile=order.Customer.Phone , Address = order.Customer.Address,CreatedAt=order.CreatedAt,
-                    DeliveredAt=order.DeliveredAt, Items = mapper.Map<List<OrderResponseDto>>(order.OrderItems.Where(u => u.OrderId == order.Id).Select(u => u.Product)), TotalItems = order.OrderItems.Count,
-                    Billing = new BillingDto { ItemTotal = order.Amount - 46, DeliveryFee = 40, PlatformFee = 6
-                    ,TotalBill=order.Amount}
+                history.Add(new OrderHistoryDto
+                {
+                    Id = order.Id,
+                    Status = order.OrderStatus.Name,
+                    Name = order.Customer.Name,
+                    Mobile = order.Customer.Phone,
+                    Address = order.Customer.Address,
+                    CreatedAt = order.CreatedAt,
+                    DeliveredAt = order.DeliveredAt,
+                    Items = mapper.Map<List<OrderResponseDto>>(order.OrderItems),
+                    TotalItems = order.OrderItems.Count,
+                    Billing = new BillingDto
+                    {
+                        ItemTotal = order.Amount - 46,
+                        DeliveryFee = 40,
+                        PlatformFee = 6,
+                        TotalBill = order.Amount
+                    }
                 });
             }
             return history;
@@ -140,7 +149,7 @@ namespace APIPractice.Services
                     Address = order.Customer.Address,
                     CreatedAt = order.CreatedAt,
                     DeliveredAt = order.DeliveredAt,
-                    Items = mapper.Map<List<OrderResponseDto>>(order.OrderItems.Where(u => u.OrderId == order.Id).Select(u => u.Product)),
+                    Items = mapper.Map<List<OrderResponseDto>>(order.OrderItems),
                     TotalItems = order.OrderItems.Count,
                     Billing = new BillingDto
                     {
