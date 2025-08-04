@@ -11,13 +11,11 @@ namespace APIPractice.Services
     {
         private readonly ICustomerRepository customerRepository;
         private readonly IMapper mapper;
-        ICategoryRepository categoryRepository;
 
-        public CustomerService(ICustomerRepository customerRepository,IMapper mapper, ICategoryRepository categoryRepository)
+        public CustomerService(ICustomerRepository customerRepository,IMapper mapper)
         {
             this.customerRepository = customerRepository;
             this.mapper = mapper;
-            this.categoryRepository = categoryRepository;
         }
 
         public async Task EditProfile(ClaimsIdentity identity, EditProfileRequest request)
@@ -42,12 +40,6 @@ namespace APIPractice.Services
             customerDto.Email = identity.FindFirst(ClaimTypes.Email).Value;
             return customerDto;
 
-        }
-
-        public async Task<List<CategoryDto>> GetCategories()
-        {
-            List<Category> categories = await categoryRepository.GetCategoriesAsync();
-            return mapper.Map<List<CategoryDto>>(categories);
         }
     }
 }

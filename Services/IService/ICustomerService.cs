@@ -9,6 +9,5 @@ namespace APIPractice.Services.IService
 
         public Task EditProfile(ClaimsIdentity identity, EditProfileRequest request);
 
-        public Task<List<CategoryDto>> GetCategories();
     }
 }

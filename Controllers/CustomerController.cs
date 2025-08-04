@@ -64,20 +64,6 @@ namespace APIPractice.Controllers
             }
         }
 
-        [HttpGet]
-        [ValidateModel]
-        [Authorize(Roles ="Customer, Manager")]
-        public async Task<IActionResult> GetCategories()
-        {
-            try
-            {
-                List<CategoryDto> categories = await customerService.GetCategories();
-                return Ok(OkResponse<List<CategoryDto>>.Success(categories));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(BadResponse<string>.Execute(ex.Message));
-            }
-        }
+        
     }
 }
