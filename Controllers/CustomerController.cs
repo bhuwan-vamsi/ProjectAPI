@@ -65,6 +65,8 @@ namespace APIPractice.Controllers
         }
 
         [HttpGet]
+        [ValidateModel]
+        [Authorize(Roles ="Customer, Manager")]
         public async Task<IActionResult> GetCategories()
         {
             try
