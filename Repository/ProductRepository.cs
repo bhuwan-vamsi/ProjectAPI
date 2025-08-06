@@ -25,7 +25,7 @@ namespace APIPractice.Repository
         public async Task<List<Product>> GetAllAsync(string? category, string? filterQuery = null,string? sortBy=null, bool isAscending= true, int pageNumber=1, int pageSize= 10)
         {
             var products = _db.Products.Include("Category").AsQueryable();
-
+            products = products.OrderBy(x=> x.Quantity < x.Threshold ? 0 : 1);
             // filtering
             if (!string.IsNullOrWhiteSpace(category))
             {

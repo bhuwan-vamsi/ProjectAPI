@@ -66,7 +66,6 @@ namespace APIPractice.Repository
             {
                 throw new Exception("Order Items not found");
             }
-            // 1. First: Fetch filtered data from DB
             var recentOrderItems = await db.OrderItems
                                     .Where(item => item.ProductId == id)
                                     .Join(db.Orders,
@@ -79,9 +78,7 @@ namespace APIPractice.Repository
                                             order.CreatedAt
                                         })
                                     .Where(x => x.CreatedAt >= DateTime.Now.AddMonths(-12))
-                                    .ToListAsync(); // <-- Fetch to memory here
-
-            // 2. Then: Do date manipulation and grouping in memory (LINQ to Objects)
+                                    .ToListAsync();
             var sellingPrice = recentOrderItems
                                     .Select(x => new
                                     {

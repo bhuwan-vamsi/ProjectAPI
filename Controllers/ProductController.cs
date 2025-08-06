@@ -103,7 +103,7 @@ namespace APIPractice.Controller
             {
                 var managerId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new UnauthorizedAccessException("Invalid User");
                 var product = await productService.CreateProductAsync(entity, Guid.Parse(managerId));
-                return CreatedAtAction(nameof(GetById), new { id = product.Id }, entity);
+                return Created();
             }
             catch (Exception)
             {
