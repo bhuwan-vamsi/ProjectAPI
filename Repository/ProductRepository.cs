@@ -144,7 +144,7 @@ namespace APIPractice.Repository
                 existingProduct.Name = updatedProduct.Name;
                 existingProduct.Price = updatedProduct.Price;
                 existingProduct.Units = updatedProduct.Units;
-                existingProduct.Quantity = existingProduct.Quantity + updatedProduct.Quantity;
+                existingProduct.Quantity = updatedProduct.Quantity;
                 existingProduct.Threshold = updatedProduct.Threshold;
                 existingProduct.ImageUrl = updatedProduct.ImageUrl;
                 existingProduct.CategoryId = updatedProduct.Category.Id;
